@@ -21,7 +21,6 @@ cls Player:
         self.card = -1
         self.reward = 0
 
-
 # ========================================
 # Calculate Reward
 # ========================================
@@ -37,9 +36,16 @@ fun calculate_reward(
 
 
 # ========================================
+# Update Contribution and Pot
+# ========================================
+fun update_contribution_and_pot(Player player, Int now_pot):
+    player.contribution = player.contribution + 1
+    now_pot = now_pot + 1
+
+
+# ========================================
 # Main Game
 # ========================================
-
 act play() -> Game:
 
     # Step 1: Initialize & Ante
@@ -49,7 +55,6 @@ act play() -> Game:
     frm now_pot = init_pot                                       # 底池当前赌注
     frm is_p1_bet = false
     frm winner = -1                                              # 是否已经有玩家胜出
-
 
     # Step 2: Deal
     act deal(Int card1, Int card2){
@@ -62,14 +67,11 @@ act play() -> Game:
         player0.card = card1
         player1.card = card2
 
-
     # Step 4: Player 0 Decision
     actions:
         act p0_check()
         act p0_bet()
-            player0.contribution = player0.contribution + 1
-            now_pot = player0.contribution + player1.contribution
-
+            update_contribution_and_pot(player0, now_pot)
 
     # Step 5: Player 1 Decision
     # p0下注的情况下，if条件成立
@@ -79,29 +81,22 @@ act play() -> Game:
                 winner = PlayerId::player0.value
 
             act p1_call()
-                player1.contribution = player1.contribution + 1
-                now_pot = player0.contribution + player1.contribution
-
+                update_contribution_and_pot(player1, now_pot)
     else:
         actions:
             act p1_check()
-
             act p1_bet()
-                player1.contribution = player1.contribution + 1
-                now_pot = player0.contribution + player1.contribution
+                update_contribution_and_pot(player1, now_pot)
                 is_p1_bet = true
 
 
-    # p1也下注的情况下，交互行为再次流转到p0
+    # p1也下注的情况下,交互行为再次流转到p0
     if is_p1_bet == true:
         actions:
             act p0_fold()
                 winner = PlayerId::player1.value
-
             act p0_call()
-                player0.contribution = player0.contribution + 1
-                now_pot = player0.contribution + player1.contribution
-
+                update_contribution_and_pot(player0, now_pot)
 
     # Step 6: Determine Winner
     if winner == -1:
@@ -110,7 +105,6 @@ act play() -> Game:
         else:
             winner = PlayerId::player1.value
 
-
     # Step 7: Calculate Rewards
     player0.reward = calculate_reward(winner, PlayerId::player0.value, now_pot, player0.contribution)
     player1.reward = calculate_reward(winner, PlayerId::player1.value, now_pot, player1.contribution)
@@ -118,7 +112,6 @@ act play() -> Game:
 # ========================================
 # Test
 # ========================================
-
 fun main() -> Int:
     let game = play()
 
