@@ -24,16 +24,10 @@ cls Player:
 # ========================================
 # Calculate Reward
 # ========================================
-fun calculate_reward(
-    Int winner,
-    Int player,
-    Int now_pot,
-    Int contribution
-) -> Int:
+fun calculate_reward(Int winner, Int player, Int now_pot, Int contribution) -> Int:
     if winner == player:
         return now_pot - contribution
     return 0 - contribution
-
 
 # ========================================
 # Update Contribution and Pot
@@ -41,7 +35,6 @@ fun calculate_reward(
 fun update_contribution_and_pot(Player player, Int now_pot):
     player.contribution = player.contribution + 1
     now_pot = now_pot + 1
-
 
 # ========================================
 # Main Game
