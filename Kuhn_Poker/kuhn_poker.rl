@@ -1,4 +1,3 @@
-
 enum CardNumber:
     J
     Q
@@ -39,6 +38,7 @@ fun update_contribution_and_pot(Player player, Int now_pot):
 # ========================================
 # Main Game
 # ========================================
+@classes
 act play() -> Game:
 
     # Step 1: Initialize & Ante
