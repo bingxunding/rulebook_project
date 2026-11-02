@@ -101,24 +101,3 @@ act play() -> Game:
     # Step 7: Calculate Rewards
     player0.reward = calculate_reward(winner, PlayerId::player0.value, now_pot, player0.contribution)
     player1.reward = calculate_reward(winner, PlayerId::player1.value, now_pot, player1.contribution)
-
-# ========================================
-# Test
-# ========================================
-fun main() -> Int:
-    let game = play()
-
-    game.deal(2, 0)
-    game.p0_bet()
-    game.p1_fold()
-
-    if !game.is_done():
-        return 1
-
-    if game.player0.reward != 1:
-        return 2
-
-    if game.player1.reward != -1:
-        return 3
-
-    return 0

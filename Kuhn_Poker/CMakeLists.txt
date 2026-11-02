@@ -89,6 +89,7 @@ file(MAKE_DIRECTORY
 
 # 项目源码
 set(GAME_SOURCE "${SRC}/kuhn_poker.rl")
+set(GAME_MAIN_SOURCE "${SRC}/kuhn_poker_main.rl")
 set(TEST_SOURCE "${SRC}/kuhn_poker_test.rl")
 set(FUZZ_SOURCE "${SRC}/kuhn_poker_fuzz.rl")
 set(HELPER "${SRC}/cmake/kuhn_poker_game.cmake")
@@ -98,9 +99,9 @@ set(GAME_BIN "${RESULT_DIR}/kuhn_poker")
 set(FUZZ_BIN "${RESULT_DIR}/kuhn_poker_fuzzer")
 
 # ==========================================================
-# 3. 正常编译游戏：kuhn_poker.rl -> result/kuhn_poker
+# 3. 正常编译游戏：kuhn_poker_main.rl -> result/kuhn_poker
 # ==========================================================
-# 等价于手动执行 rlc kuhn_poker.rl -g -o result/kuhn_poker
+# 等价于手动执行 rlc kuhn_poker_main.rl -g -o result/kuhn_poker
 # 定义怎么编译，定义的是：如何生成一个具体文件。
 # OUTPUT：最终需要生成的文件：result/kuhn_poker
 # COMMAND：实际执行的命令
@@ -112,8 +113,8 @@ set(FUZZ_BIN "${RESULT_DIR}/kuhn_poker_fuzzer")
 # VERBATIM 正确处理命令参数的转义和引用，是 CMake 官方推荐的自定义构建写法，通常应该保留
 add_custom_command(
     OUTPUT "${GAME_BIN}"
-    COMMAND "${RLC}" "${GAME_SOURCE}" -g -o "${GAME_BIN}"
-    DEPENDS "${GAME_SOURCE}"
+    COMMAND "${RLC}" "${GAME_MAIN_SOURCE}" -g -o "${GAME_BIN}"
+    DEPENDS "${GAME_MAIN_SOURCE}" "${GAME_SOURCE}"
     WORKING_DIRECTORY "${SRC}"
     COMMENT "编译正常 Kuhn Poker 游戏"
     VERBATIM
