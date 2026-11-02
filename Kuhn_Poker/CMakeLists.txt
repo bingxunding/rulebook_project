@@ -4,11 +4,15 @@ cmake_minimum_required(VERSION 3.20)
 project(KuhnPoker LANGUAGES NONE)
 
 # 启用 CTest
+# dingbingxun_temp_code
+# 这个就是为了开启CTest的吗？那不开启会怎么样
 enable_testing()
 
 # ==========================================================
 # 1. 从当前 Conda 环境中查找编译、测试工具
+# 确保Cmake使用的是rulebook环境中的RLC和LLVM 22
 # ==========================================================
+# CONDA_PREFIX 是conda提供的当前激活的 Conda 环境路径
 if(NOT DEFINED ENV{CONDA_PREFIX})
     message(FATAL_ERROR "请先执行 conda activate rulebook")
 endif()
@@ -16,20 +20,37 @@ endif()
 set(CONDA_BIN "$ENV{CONDA_PREFIX}/bin")
 set(CONDA_LIB "$ENV{CONDA_PREFIX}/lib")
 
+# 确保rlc程序已经安装了
 find_program(RLC NAMES rlc
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# 确保rlc的单元测试工具已经安装
 find_program(RLC_TEST NAMES rlc-test
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# clang-22是LLVM 22 编译和链接工具
 find_program(CLANG NAMES clang-22
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# opt是LLVM IR 处理工具
 find_program(LLVM_OPT NAMES opt
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# llvm-symbolizer：将 ASan 错误地址转换成可读信息
 find_program(SYMBOLIZER NAMES llvm-symbolizer
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# libfuzzer.a 提供模糊测试引擎（Fuzzing Engine）
+# libfuzzer.a
 find_file(FUZZ_ADAPTER NAMES libfuzzer.a
     PATHS "${CONDA_LIB}" NO_DEFAULT_PATH REQUIRED)
 
 # LLVM 22 在 macOS 上链接时需要 SDK 路径
+# 作用是：如果命令失败或者没有得到路径，就直接停止配置。
+# 在Configure 阶段 执行：xcrun --sdk macosx --show-sdk-path
+# OUTPUT_VARIABLE：保存命令标准输出
+# OUTPUT_STRIP_TRAILING_WHITESPACE：去掉末尾换行和空白
+# RESULT_VARIABLE：保存命令退出状态
 execute_process(
     COMMAND xcrun --sdk macosx --show-sdk-path
     OUTPUT_VARIABLE MACOS_SDK
@@ -43,6 +64,9 @@ endif()
 # ==========================================================
 # 2. 目录：result/ 放最终程序，build_cmake/temp/ 放中间文件
 # ==========================================================
+# 对应变量是CMake 自带的路径变量
+# CMAKE_CURRENT_SOURCE_DIR：当前 CMake 源码目录，对应 Kuhn_Poker/
+# CMAKE_CURRENT_BINARY_DIR：当前 CMake 构建目录，对应 Kuhn_Poker/build_cmake/
 set(SRC "${CMAKE_CURRENT_SOURCE_DIR}")
 set(BUILD "${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -52,6 +76,8 @@ set(FUZZ_TEMP "${TEMP_DIR}/fuzzer")
 set(TEST_TEMP "${TEMP_DIR}/test")
 set(ASAN_TEMP "${TEMP_DIR}/Sanitizer")
 
+# 在 Configure 阶段执行
+# corpus 和 artifacts 是 libFuzzer 使用的测试数据目录
 file(MAKE_DIRECTORY
     "${RESULT_DIR}"
     "${FUZZ_TEMP}/corpus"
@@ -74,6 +100,16 @@ set(FUZZ_BIN "${RESULT_DIR}/kuhn_poker_fuzzer")
 # ==========================================================
 # 3. 正常编译游戏：kuhn_poker.rl -> result/kuhn_poker
 # ==========================================================
+# 等价于手动执行 rlc kuhn_poker.rl -g -o result/kuhn_poker
+# 定义怎么编译，定义的是：如何生成一个具体文件。
+# OUTPUT：最终需要生成的文件：result/kuhn_poker
+# COMMAND：实际执行的命令
+# DEPENDS：构建依赖的输入文件，Ninja 就知道：输出程序依赖于源文件，源文件发生变化后应重新编译。
+# 如果没有修改文件，而且输出文件还存在，通常就不需要重新编译。
+# 所谓的 Incremental Build 增量构建
+# WORKING_DIRECTORY：执行命令时的当前目录
+# COMMENT 构建时显示的说明
+# VERBATIM 正确处理命令参数的转义和引用，是 CMake 官方推荐的自定义构建写法，通常应该保留
 add_custom_command(
     OUTPUT "${GAME_BIN}"
     COMMAND "${RLC}" "${GAME_SOURCE}" -g -o "${GAME_BIN}"
@@ -82,15 +118,19 @@ add_custom_command(
     COMMENT "编译正常 Kuhn Poker 游戏"
     VERBATIM
 )
+
+# 给构建任务命名，定义的是：一个用户可以通过名字选择执行的构建目标。
+# 
 add_custom_target(game_build ALL DEPENDS "${GAME_BIN}")
 
 # ==========================================================
 # 4. Fuzzer 构建：RLC 官方 --fuzzer 模式 + Conda LLVM 22
 # ==========================================================
-# RLC 原始 IR：归类到 temp/fuzzer
+# RLC 原始 IR：归类到 temp/fuzzer。kuhn.raw.ll，LLVM IR类型，RLC 编译产生的中间表示
 set(RAW_IR "${FUZZ_TEMP}/kuhn.raw.ll")
-# ASan 插桩 IR / Object：归类到 temp/Sanitizer
+# ASan 插桩 IR / Object：归类到 temp/Sanitizer，kuhn.asan.ll，LLVM IR类型，加入 ASan 插桩后的中间表示
 set(ASAN_IR "${ASAN_TEMP}/kuhn.asan.ll")
+# kuhn.asan.o Object File 类型 编译成机器代码后的目标文件
 set(ASAN_OBJ "${ASAN_TEMP}/kuhn.asan.o")
 
 add_custom_command(
@@ -124,6 +164,8 @@ add_custom_command(
         "${ASAN_OBJ}" "${FUZZ_ADAPTER}"
         -o "${FUZZ_BIN}"
 
+    # DEPENDS 表示：修改游戏代码、Fuzzer 入口或辅助脚本后，需要重新执行 Fuzzer 构建。
+    # BYPRODUCTS 表示：除了主要输出 kuhn_poker_fuzzer，这个命令还会产生三个中间文件。
     DEPENDS "${GAME_SOURCE}" "${FUZZ_SOURCE}" "${HELPER}"
     BYPRODUCTS "${RAW_IR}" "${ASAN_IR}" "${ASAN_OBJ}"
     WORKING_DIRECTORY "${SRC}"
@@ -175,6 +217,11 @@ set_tests_properties(sanitizer_test fuzzer_test PROPERTIES
 # ==========================================================
 # 6. 一键构建和执行全部测试
 # ==========================================================
+# CMAKE_CTEST_COMMAND：指向 CTest 可执行程序
+# --output-on-failure：测试失败时显示对应的测试输出
+# --output-log：将 CTest 输出保存到日志文件
+# WORKING_DIRECTORY：指定执行 CTest 的工作目录
+# USES_TERMINAL：让构建命令使用终端，方便显示测试过程
 add_custom_target(verify_all
     COMMAND "${CMAKE_CTEST_COMMAND}"
         --output-on-failure
@@ -184,6 +231,7 @@ add_custom_target(verify_all
     USES_TERMINAL
     VERBATIM
 )
+# verify_all 必须先完成 game_build 和 fuzzer_build，才能执行测试
 add_dependencies(verify_all game_build fuzzer_build)
 
 message(STATUS "Kuhn Poker 配置完成")
