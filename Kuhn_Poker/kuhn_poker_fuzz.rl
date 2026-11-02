@@ -1,7 +1,8 @@
 import kuhn_poker
 import action
 
-# Enable only in the separate trace build used to audit executed actions.
+# FUZZ_TRACE = 0 不打印每个执行的 Action
+# FUZZ_TRACE = 1 打印合法且已执行的 Action；游戏结束时打印提示
 const FUZZ_TRACE = 0
 
 fun fuzz(Vector<Byte> input):
