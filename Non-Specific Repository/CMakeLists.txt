@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 # 使用 Rulebook (RLC) 编译，不启用 CMake 默认的 C/C++ 编译规则
-project(KuhnPoker LANGUAGES NONE)
+project(RulebookGame LANGUAGES NONE)
 
 # 启用 CTest
 enable_testing()
@@ -63,8 +63,8 @@ endif()
 # 2. 目录：result/ 放最终程序，build_cmake/temp/ 放中间文件
 # ==========================================================
 # 对应变量是CMake 自带的路径变量
-# CMAKE_CURRENT_SOURCE_DIR：当前 CMake 源码目录，对应 Kuhn_Poker/
-# CMAKE_CURRENT_BINARY_DIR：当前 CMake 构建目录，对应 Kuhn_Poker/build_cmake/
+# CMAKE_CURRENT_SOURCE_DIR：当前 CMake 源码目录
+# CMAKE_CURRENT_BINARY_DIR：当前 CMake 构建目录
 set(SRC "${CMAKE_CURRENT_SOURCE_DIR}")
 set(BUILD "${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -86,22 +86,22 @@ file(MAKE_DIRECTORY
 )
 
 # 项目源码
-set(GAME_SOURCE "${SRC}/kuhn_poker.rl")
-set(GAME_MAIN_SOURCE "${SRC}/kuhn_poker_main.rl")
-set(TEST_SOURCE "${SRC}/kuhn_poker_test.rl")
-set(FUZZ_SOURCE "${SRC}/kuhn_poker_fuzz.rl")
-set(HELPER "${SRC}/cmake/kuhn_poker_game.cmake")
+set(GAME_SOURCE "${SRC}/game.rl")
+set(GAME_MAIN_SOURCE "${SRC}/game_main.rl")
+set(TEST_SOURCE "${SRC}/game_test.rl")
+set(FUZZ_SOURCE "${SRC}/game_fuzz.rl")
+set(HELPER "${SRC}/cmake/rulebook_game.cmake")
 
 # 最终可执行程序：与 .rl 同级的 result/ 目录
-set(GAME_BIN "${RESULT_DIR}/kuhn_poker")
-set(FUZZ_BIN "${RESULT_DIR}/kuhn_poker_fuzzer")
+set(GAME_BIN "${RESULT_DIR}/game")
+set(FUZZ_BIN "${RESULT_DIR}/game_fuzzer")
 
 # ==========================================================
-# 3. 正常编译游戏：kuhn_poker_main.rl -> result/kuhn_poker
+# 3. 正常编译游戏：game_main.rl -> result/game
 # ==========================================================
-# 等价于手动执行 rlc kuhn_poker_main.rl -g -o result/kuhn_poker
+# 等价于手动执行 rlc game_main.rl -g -o result/game
 # 定义怎么编译，定义的是：如何生成一个具体文件。
-# OUTPUT：最终需要生成的文件：result/kuhn_poker
+# OUTPUT：最终需要生成的文件：result/game
 # COMMAND：实际执行的命令
 # DEPENDS：构建依赖的输入文件，Ninja 就知道：输出程序依赖于源文件，源文件发生变化后应重新编译。
 # 如果没有修改文件，而且输出文件还存在，通常就不需要重新编译。
@@ -114,7 +114,7 @@ add_custom_command(
     COMMAND "${RLC}" "${GAME_MAIN_SOURCE}" -g -o "${GAME_BIN}"
     DEPENDS "${GAME_MAIN_SOURCE}" "${GAME_SOURCE}"
     WORKING_DIRECTORY "${SRC}"
-    COMMENT "编译正常 Kuhn Poker 游戏"
+    COMMENT "编译游戏程序"
     VERBATIM
 )
 
@@ -125,12 +125,12 @@ add_custom_target(game_build ALL DEPENDS "${GAME_BIN}")
 # ==========================================================
 # 4. Fuzzer 构建：RLC 官方 --fuzzer 模式 + Conda LLVM 22
 # ==========================================================
-# RLC 原始 IR：归类到 temp/fuzzer。kuhn.raw.ll，LLVM IR类型，RLC 编译产生的中间表示
-set(RAW_IR "${FUZZ_TEMP}/kuhn.raw.ll")
-# ASan 插桩 IR / Object：归类到 temp/Sanitizer，kuhn.asan.ll，LLVM IR类型，加入 ASan 插桩后的中间表示
-set(ASAN_IR "${ASAN_TEMP}/kuhn.asan.ll")
-# kuhn.asan.o Object File 类型 编译成机器代码后的目标文件
-set(ASAN_OBJ "${ASAN_TEMP}/kuhn.asan.o")
+# RLC 原始 IR：归类到 temp/fuzzer。game.raw.ll，LLVM IR类型，RLC 编译产生的中间表示
+set(RAW_IR "${FUZZ_TEMP}/game.raw.ll")
+# ASan 插桩 IR / Object：归类到 temp/Sanitizer，game.asan.ll，LLVM IR类型，加入 ASan 插桩后的中间表示
+set(ASAN_IR "${ASAN_TEMP}/game.asan.ll")
+# game.asan.o Object File 类型 编译成机器代码后的目标文件
+set(ASAN_OBJ "${ASAN_TEMP}/game.asan.o")
 
 add_custom_command(
     OUTPUT "${FUZZ_BIN}"
@@ -164,7 +164,7 @@ add_custom_command(
         -o "${FUZZ_BIN}"
 
     # DEPENDS 表示：修改游戏代码、Fuzzer 入口或辅助脚本后，需要重新执行 Fuzzer 构建。
-    # BYPRODUCTS 表示：除了主要输出 kuhn_poker_fuzzer，这个命令还会产生三个中间文件。
+    # BYPRODUCTS 表示：除了主要输出 game_fuzzer，这个命令还会产生三个中间文件。
     DEPENDS "${GAME_SOURCE}" "${FUZZ_SOURCE}" "${HELPER}"
     BYPRODUCTS "${RAW_IR}" "${ASAN_IR}" "${ASAN_OBJ}"
     WORKING_DIRECTORY "${SRC}"
@@ -226,13 +226,13 @@ add_custom_target(verify_all
         --output-on-failure
         --output-log "${TEST_TEMP}/ctest.log"
     WORKING_DIRECTORY "${BUILD}"
-    COMMENT "运行全部 Kuhn Poker 测试"
+    COMMENT "运行全部游戏测试"
     USES_TERMINAL
     VERBATIM
 )
 # verify_all 必须先完成 game_build 和 fuzzer_build，才能执行测试
 add_dependencies(verify_all game_build fuzzer_build)
 
-message(STATUS "Kuhn Poker 配置完成")
+message(STATUS "RulebookGame 配置完成")
 message(STATUS "最终可执行文件：${RESULT_DIR}")
 message(STATUS "编译及测试中间文件：${TEMP_DIR}")

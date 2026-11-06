@@ -1,4 +1,4 @@
-import kuhn_poker
+import game
 
 # ========================================
 # Test

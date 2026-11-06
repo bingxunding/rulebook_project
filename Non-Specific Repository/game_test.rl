@@ -1,6 +1,6 @@
 # Kuhn Poker 可以枚举 6 种有序发牌 × 5 条终局行动路线，共 30 种组合。
 # 五条路线是：下注→弃牌、下注→跟注、过牌→过牌、过牌→下注→弃牌、过牌→下注→跟注。
-import kuhn_poker
+import game
 
 # Test 1: Initial State
 fun test_initial_state() -> Bool:

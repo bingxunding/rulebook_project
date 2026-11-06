@@ -40,7 +40,7 @@ if(MODE STREQUAL "ir")
 
 elseif(MODE STREQUAL "unit")
     # 运行 Rulebook 单元测试；把 stdout 和 stderr 记录到 temp/test。
-    # 相当于执行    rlc-test kuhn_poker_test.rl
+    # 相当于执行    rlc-test game_test.rl
     # TEST_STDOUT：正常输出
     # TEST_STDERR：错误输出
     # TEST_RESULT：退出状态

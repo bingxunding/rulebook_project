@@ -1,4 +1,4 @@
-import kuhn_poker
+import game
 import action
 
 # FUZZ_TRACE = 0 不打印每个执行的 Action
