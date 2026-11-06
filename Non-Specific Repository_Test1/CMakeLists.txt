@@ -1,0 +1,238 @@
+cmake_minimum_required(VERSION 3.20)
+
+# Compile with Rulebook (RLC) without enabling CMake's default C/C++ build rules.
+project(RulebookGame LANGUAGES NONE)
+
+# Enable CTest.
+enable_testing()
+
+# ==========================================================
+# 1. Find build and test tools in the active Conda environment
+# Ensure CMake uses RLC and LLVM 22 from the rulebook environment.
+# ==========================================================
+# Conda sets CONDA_PREFIX to the path of the active environment.
+if(NOT DEFINED ENV{CONDA_PREFIX})
+    message(FATAL_ERROR "Activate a Conda environment with the required tools first.")
+endif()
+
+set(CONDA_BIN "$ENV{CONDA_PREFIX}/bin")
+set(CONDA_LIB "$ENV{CONDA_PREFIX}/lib")
+
+# Ensure rlc is installed.
+find_program(RLC NAMES rlc
+    PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# Ensure the RLC unit test tool is installed.
+find_program(RLC_TEST NAMES rlc-test
+    PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# clang-22 is the LLVM 22 tool for compiling and linking.
+find_program(CLANG NAMES clang-22
+    PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# opt processes LLVM IR.
+find_program(LLVM_OPT NAMES opt
+    PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# llvm-symbolizer turns ASan error addresses into readable information.
+find_program(SYMBOLIZER NAMES llvm-symbolizer
+    PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# libfuzzer.a provides the fuzzing engine.
+# libfuzzer.a
+find_file(FUZZ_ADAPTER NAMES libfuzzer.a
+    PATHS "${CONDA_LIB}" NO_DEFAULT_PATH REQUIRED)
+
+# LLVM 22 needs the SDK path to link on macOS.
+# Stop configuration immediately if the command fails or returns no path.
+# During configuration, run xcrun --sdk macosx --show-sdk-path.
+# OUTPUT_VARIABLE captures the command's standard output.
+# OUTPUT_STRIP_TRAILING_WHITESPACE removes trailing newlines and whitespace.
+# RESULT_VARIABLE stores the command's exit status.
+execute_process(
+    COMMAND xcrun --sdk macosx --show-sdk-path
+    OUTPUT_VARIABLE MACOS_SDK
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE SDK_RESULT
+)
+if(NOT "${SDK_RESULT}" STREQUAL "0" OR MACOS_SDK STREQUAL "")
+    message(FATAL_ERROR "macOS SDK not found. Check xcrun and the Xcode Command Line Tools.")
+endif()
+
+# ==========================================================
+# 2. Directories for final executables (result/) and intermediate files (build_cmake/temp/)
+# ==========================================================
+# Use CMake's built-in path variables.
+# CMAKE_CURRENT_SOURCE_DIR is the current CMake source directory.
+# CMAKE_CURRENT_BINARY_DIR is the current CMake build directory.
+set(SRC "${CMAKE_CURRENT_SOURCE_DIR}")
+set(BUILD "${CMAKE_CURRENT_BINARY_DIR}")
+
+set(RESULT_DIR "${SRC}/result")
+set(TEMP_DIR "${BUILD}/temp")
+set(FUZZ_TEMP "${TEMP_DIR}/fuzzer")
+set(TEST_TEMP "${TEMP_DIR}/test")
+set(ASAN_TEMP "${TEMP_DIR}/Sanitizer")
+
+# Create these directories during configuration.
+# libFuzzer uses corpus and artifacts as test data directories.
+file(MAKE_DIRECTORY
+    "${RESULT_DIR}"
+    "${FUZZ_TEMP}/corpus"
+    "${FUZZ_TEMP}/artifacts"
+    "${TEST_TEMP}"
+    "${ASAN_TEMP}/corpus"
+    "${ASAN_TEMP}/artifacts"
+)
+
+# Project source files
+set(GAME_SOURCE "${SRC}/game.rl")
+set(GAME_MAIN_SOURCE "${SRC}/game_main.rl")
+set(TEST_SOURCE "${SRC}/game_test.rl")
+set(FUZZ_SOURCE "${SRC}/game_fuzz.rl")
+set(HELPER "${SRC}/cmake/rulebook_game.cmake")
+
+# Store the final executables in result/, alongside the .rl files.
+set(GAME_BIN "${RESULT_DIR}/game")
+set(FUZZ_BIN "${RESULT_DIR}/game_fuzzer")
+
+# ==========================================================
+# 3. Build the regular game executable (game_main.rl -> result/game)
+# ==========================================================
+# Equivalent to running rlc game_main.rl -g -o result/game manually.
+# Define how to build a specific output file.
+# OUTPUT specifies the file to generate, result/game.
+# COMMAND is the command to run.
+# DEPENDS lists build inputs so Ninja knows to rebuild the executable when the source files change.
+# If the files are unchanged and the output still exists, a rebuild is usually unnecessary.
+# This is an incremental build.
+# WORKING_DIRECTORY is the current directory when the command runs.
+# COMMENT is the description shown during the build.
+# VERBATIM handles command argument escaping and quoting. CMake recommends keeping it for custom builds.
+add_custom_command(
+    OUTPUT "${GAME_BIN}"
+    COMMAND "${RLC}" "${GAME_MAIN_SOURCE}" -g -o "${GAME_BIN}"
+    DEPENDS "${GAME_MAIN_SOURCE}" "${GAME_SOURCE}"
+    WORKING_DIRECTORY "${SRC}"
+    COMMENT "Build the game executable"
+    VERBATIM
+)
+
+# Name the build target so users can select it by name.
+# 
+add_custom_target(game_build ALL DEPENDS "${GAME_BIN}")
+
+# ==========================================================
+# 4. Build the Fuzzer with RLC's built-in --fuzzer mode and Conda LLVM 22
+# ==========================================================
+# game.raw.ll is the raw LLVM IR generated by RLC and stored in temp/fuzzer.
+set(RAW_IR "${FUZZ_TEMP}/game.raw.ll")
+# ASan-instrumented IR and object files go in temp/Sanitizer. game.asan.ll contains the instrumented LLVM IR.
+set(ASAN_IR "${ASAN_TEMP}/game.asan.ll")
+# game.asan.o is the object file containing the compiled machine code.
+set(ASAN_OBJ "${ASAN_TEMP}/game.asan.o")
+
+add_custom_command(
+    OUTPUT "${FUZZ_BIN}"
+
+    # Step 1. Generate LLVM IR using RLC's built-in --fuzzer option.
+    # The helper captures RLC standard output with OUTPUT_FILE, without shell > redirection.
+    COMMAND "${CMAKE_COMMAND}"
+        "-DMODE=ir"
+        "-DRLC=${RLC}"
+        "-DSOURCE=${FUZZ_SOURCE}"
+        "-DINCLUDE_DIR=${SRC}"
+        "-DOUTPUT=${RAW_IR}"
+        -P "${HELPER}"
+
+    # Step 2. Add AddressSanitizer instrumentation.
+    COMMAND "${LLVM_OPT}"
+        -S -passes=forceattrs,asan
+        -force-attribute=sanitize_address
+        "${RAW_IR}" -o "${ASAN_IR}"
+
+    # Step 3. Compile the LLVM IR to a .o object file.
+    COMMAND "${CLANG}"
+        -g -O0 -fno-omit-frame-pointer
+        -c "${ASAN_IR}" -o "${ASAN_OBJ}"
+
+    # Step 4. Link the LLVM libFuzzer runtime and the RLC adapter library.
+    COMMAND "${CLANG}"
+        -g -isysroot "${MACOS_SDK}"
+        -fsanitize=fuzzer,address
+        "${ASAN_OBJ}" "${FUZZ_ADAPTER}"
+        -o "${FUZZ_BIN}"
+
+    # DEPENDS rebuilds the Fuzzer when the game source, Fuzzer entry point, or helper script changes.
+    # BYPRODUCTS lists the three intermediate files this command produces alongside the main output game_fuzzer.
+    DEPENDS "${GAME_SOURCE}" "${FUZZ_SOURCE}" "${HELPER}"
+    BYPRODUCTS "${RAW_IR}" "${ASAN_IR}" "${ASAN_OBJ}"
+    WORKING_DIRECTORY "${SRC}"
+    COMMENT "Build the RLC Fuzzer with ASan instrumentation"
+    VERBATIM
+)
+add_custom_target(fuzzer_build ALL DEPENDS "${FUZZ_BIN}")
+
+# ==========================================================
+# 5. CTest suite: game, unit, short ASan, and fuzzer tests
+# ==========================================================
+# Test 1 passes when the game's main() returns 0.
+add_test(NAME game_test COMMAND "${GAME_BIN}")
+
+# Test 2 runs rlc-test and writes its output to temp/test/unit_test.log.
+add_test(NAME unit_test
+    COMMAND "${CMAKE_COMMAND}"
+        "-DMODE=unit"
+        "-DRLC_TEST=${RLC_TEST}"
+        "-DSOURCE=${TEST_SOURCE}"
+        "-DSOURCE_DIR=${SRC}"
+        "-DOUTPUT=${TEST_TEMP}/unit_test.log"
+        -P "${HELPER}"
+)
+
+# Test 3 uses the same ASan-instrumented fuzzer for a short 100-run test.
+add_test(NAME sanitizer_test
+    COMMAND "${FUZZ_BIN}"
+        -runs=100 -seed=418 -max_len=256 -timeout=5
+        "-artifact_prefix=${ASAN_TEMP}/artifacts/"
+        "${ASAN_TEMP}/corpus"
+)
+
+# Test 4 performs 10,000 runs of coverage-guided fuzzing with a separate corpus.
+add_test(NAME fuzzer_test
+    COMMAND "${FUZZ_BIN}"
+        -runs=10000 -seed=418 -max_len=256 -timeout=5
+        -print_final_stats=1
+        "-artifact_prefix=${FUZZ_TEMP}/artifacts/"
+        "${FUZZ_TEMP}/corpus"
+)
+
+set_tests_properties(sanitizer_test fuzzer_test PROPERTIES
+    ENVIRONMENT "ASAN_SYMBOLIZER_PATH=${SYMBOLIZER}"
+    TIMEOUT 180
+    RUN_SERIAL TRUE
+)
+
+# ==========================================================
+# 6. Build and run all tests with one command
+# ==========================================================
+# CMAKE_CTEST_COMMAND points to the CTest executable.
+# --output-on-failure shows output from failed tests.
+# --output-log saves CTest output to a log file.
+# WORKING_DIRECTORY sets the directory from which CTest runs.
+# USES_TERMINAL gives the build command access to the terminal so test progress is visible.
+add_custom_target(verify_all
+    COMMAND "${CMAKE_CTEST_COMMAND}"
+        --output-on-failure
+        --output-log "${TEST_TEMP}/ctest.log"
+    WORKING_DIRECTORY "${BUILD}"
+    COMMENT "Run all game tests"
+    USES_TERMINAL
+    VERBATIM
+)
+# verify_all must complete game_build and fuzzer_build before running the tests.
+add_dependencies(verify_all game_build fuzzer_build)
+
+message(STATUS "RulebookGame configuration complete")
+message(STATUS "Final executables are in ${RESULT_DIR}")
+message(STATUS "Build and test intermediate files are in ${TEMP_DIR}")

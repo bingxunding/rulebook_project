@@ -1,0 +1,17 @@
+# Reference environment for native Apple Silicon macOS (osx-arm64).
+# Pin the compiler/tool versions used by the current CMake build.
+name: rulebook
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
+  - pip
+  - cmake=4.4.3
+  - ninja=1.13.2
+  - zstd=1.5.7
+  - clang_osx-arm64=22.1.8
+  - llvm-tools=22.1.8
+  - compiler-rt=22.1.8
+  - pip:
+      - rl-language-core==0.4.18
