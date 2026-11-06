@@ -1,54 +1,54 @@
 cmake_minimum_required(VERSION 3.20)
 
-# 使用 Rulebook (RLC) 编译，不启用 CMake 默认的 C/C++ 编译规则
+# Compile with Rulebook (RLC) without enabling CMake's default C/C++ build rules.
 project(RulebookGame LANGUAGES NONE)
 
-# 启用 CTest
+# Enable CTest.
 enable_testing()
 
 # ==========================================================
-# 1. 从当前 Conda 环境中查找编译、测试工具
-# 确保Cmake使用的是rulebook环境中的RLC和LLVM 22
+# 1. Find build and test tools in the active Conda environment
+# Ensure CMake uses RLC and LLVM 22 from the rulebook environment.
 # ==========================================================
-# CONDA_PREFIX 是conda提供的当前激活的 Conda 环境路径
+# Conda sets CONDA_PREFIX to the path of the active environment.
 if(NOT DEFINED ENV{CONDA_PREFIX})
-    message(FATAL_ERROR "请先执行 conda activate rulebook")
+    message(FATAL_ERROR "Activate a Conda environment with the required tools first.")
 endif()
 
 set(CONDA_BIN "$ENV{CONDA_PREFIX}/bin")
 set(CONDA_LIB "$ENV{CONDA_PREFIX}/lib")
 
-# 确保rlc程序已经安装了
+# Ensure rlc is installed.
 find_program(RLC NAMES rlc
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
-# 确保rlc的单元测试工具已经安装
+# Ensure the RLC unit test tool is installed.
 find_program(RLC_TEST NAMES rlc-test
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
-# clang-22是LLVM 22 编译和链接工具
+# clang-22 is the LLVM 22 tool for compiling and linking.
 find_program(CLANG NAMES clang-22
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
-# opt是LLVM IR 处理工具
+# opt processes LLVM IR.
 find_program(LLVM_OPT NAMES opt
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
-# llvm-symbolizer：将 ASan 错误地址转换成可读信息
+# llvm-symbolizer turns ASan error addresses into readable information.
 find_program(SYMBOLIZER NAMES llvm-symbolizer
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
-# libfuzzer.a 提供模糊测试引擎（Fuzzing Engine）
+# libfuzzer.a provides the fuzzing engine.
 # libfuzzer.a
 find_file(FUZZ_ADAPTER NAMES libfuzzer.a
     PATHS "${CONDA_LIB}" NO_DEFAULT_PATH REQUIRED)
 
-# LLVM 22 在 macOS 上链接时需要 SDK 路径
-# 作用是：如果命令失败或者没有得到路径，就直接停止配置。
-# 在Configure 阶段 执行：xcrun --sdk macosx --show-sdk-path
-# OUTPUT_VARIABLE：保存命令标准输出
-# OUTPUT_STRIP_TRAILING_WHITESPACE：去掉末尾换行和空白
-# RESULT_VARIABLE：保存命令退出状态
+# LLVM 22 needs the SDK path to link on macOS.
+# Stop configuration immediately if the command fails or returns no path.
+# During configuration, run xcrun --sdk macosx --show-sdk-path.
+# OUTPUT_VARIABLE captures the command's standard output.
+# OUTPUT_STRIP_TRAILING_WHITESPACE removes trailing newlines and whitespace.
+# RESULT_VARIABLE stores the command's exit status.
 execute_process(
     COMMAND xcrun --sdk macosx --show-sdk-path
     OUTPUT_VARIABLE MACOS_SDK
@@ -56,15 +56,15 @@ execute_process(
     RESULT_VARIABLE SDK_RESULT
 )
 if(NOT "${SDK_RESULT}" STREQUAL "0" OR MACOS_SDK STREQUAL "")
-    message(FATAL_ERROR "找不到 macOS SDK，请检查 xcrun / Xcode Command Line Tools")
+    message(FATAL_ERROR "macOS SDK not found. Check xcrun and the Xcode Command Line Tools.")
 endif()
 
 # ==========================================================
-# 2. 目录：result/ 放最终程序，build_cmake/temp/ 放中间文件
+# 2. Directories for final executables (result/) and intermediate files (build_cmake/temp/)
 # ==========================================================
-# 对应变量是CMake 自带的路径变量
-# CMAKE_CURRENT_SOURCE_DIR：当前 CMake 源码目录
-# CMAKE_CURRENT_BINARY_DIR：当前 CMake 构建目录
+# Use CMake's built-in path variables.
+# CMAKE_CURRENT_SOURCE_DIR is the current CMake source directory.
+# CMAKE_CURRENT_BINARY_DIR is the current CMake build directory.
 set(SRC "${CMAKE_CURRENT_SOURCE_DIR}")
 set(BUILD "${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -74,8 +74,8 @@ set(FUZZ_TEMP "${TEMP_DIR}/fuzzer")
 set(TEST_TEMP "${TEMP_DIR}/test")
 set(ASAN_TEMP "${TEMP_DIR}/Sanitizer")
 
-# 在 Configure 阶段执行
-# corpus 和 artifacts 是 libFuzzer 使用的测试数据目录
+# Create these directories during configuration.
+# libFuzzer uses corpus and artifacts as test data directories.
 file(MAKE_DIRECTORY
     "${RESULT_DIR}"
     "${FUZZ_TEMP}/corpus"
@@ -85,58 +85,58 @@ file(MAKE_DIRECTORY
     "${ASAN_TEMP}/artifacts"
 )
 
-# 项目源码
+# Project source files
 set(GAME_SOURCE "${SRC}/game.rl")
 set(GAME_MAIN_SOURCE "${SRC}/game_main.rl")
 set(TEST_SOURCE "${SRC}/game_test.rl")
 set(FUZZ_SOURCE "${SRC}/game_fuzz.rl")
 set(HELPER "${SRC}/cmake/rulebook_game.cmake")
 
-# 最终可执行程序：与 .rl 同级的 result/ 目录
+# Store the final executables in result/, alongside the .rl files.
 set(GAME_BIN "${RESULT_DIR}/game")
 set(FUZZ_BIN "${RESULT_DIR}/game_fuzzer")
 
 # ==========================================================
-# 3. 正常编译游戏：game_main.rl -> result/game
+# 3. Build the regular game executable (game_main.rl -> result/game)
 # ==========================================================
-# 等价于手动执行 rlc game_main.rl -g -o result/game
-# 定义怎么编译，定义的是：如何生成一个具体文件。
-# OUTPUT：最终需要生成的文件：result/game
-# COMMAND：实际执行的命令
-# DEPENDS：构建依赖的输入文件，Ninja 就知道：输出程序依赖于源文件，源文件发生变化后应重新编译。
-# 如果没有修改文件，而且输出文件还存在，通常就不需要重新编译。
-# 所谓的 Incremental Build 增量构建
-# WORKING_DIRECTORY：执行命令时的当前目录
-# COMMENT 构建时显示的说明
-# VERBATIM 正确处理命令参数的转义和引用，是 CMake 官方推荐的自定义构建写法，通常应该保留
+# Equivalent to running rlc game_main.rl -g -o result/game manually.
+# Define how to build a specific output file.
+# OUTPUT specifies the file to generate, result/game.
+# COMMAND is the command to run.
+# DEPENDS lists build inputs so Ninja knows to rebuild the executable when the source files change.
+# If the files are unchanged and the output still exists, a rebuild is usually unnecessary.
+# This is an incremental build.
+# WORKING_DIRECTORY is the current directory when the command runs.
+# COMMENT is the description shown during the build.
+# VERBATIM handles command argument escaping and quoting. CMake recommends keeping it for custom builds.
 add_custom_command(
     OUTPUT "${GAME_BIN}"
     COMMAND "${RLC}" "${GAME_MAIN_SOURCE}" -g -o "${GAME_BIN}"
     DEPENDS "${GAME_MAIN_SOURCE}" "${GAME_SOURCE}"
     WORKING_DIRECTORY "${SRC}"
-    COMMENT "编译游戏程序"
+    COMMENT "Build the game executable"
     VERBATIM
 )
 
-# 给构建任务命名，定义的是：一个用户可以通过名字选择执行的构建目标。
+# Name the build target so users can select it by name.
 # 
 add_custom_target(game_build ALL DEPENDS "${GAME_BIN}")
 
 # ==========================================================
-# 4. Fuzzer 构建：RLC 官方 --fuzzer 模式 + Conda LLVM 22
+# 4. Build the Fuzzer with RLC's built-in --fuzzer mode and Conda LLVM 22
 # ==========================================================
-# RLC 原始 IR：归类到 temp/fuzzer。game.raw.ll，LLVM IR类型，RLC 编译产生的中间表示
+# game.raw.ll is the raw LLVM IR generated by RLC and stored in temp/fuzzer.
 set(RAW_IR "${FUZZ_TEMP}/game.raw.ll")
-# ASan 插桩 IR / Object：归类到 temp/Sanitizer，game.asan.ll，LLVM IR类型，加入 ASan 插桩后的中间表示
+# ASan-instrumented IR and object files go in temp/Sanitizer. game.asan.ll contains the instrumented LLVM IR.
 set(ASAN_IR "${ASAN_TEMP}/game.asan.ll")
-# game.asan.o Object File 类型 编译成机器代码后的目标文件
+# game.asan.o is the object file containing the compiled machine code.
 set(ASAN_OBJ "${ASAN_TEMP}/game.asan.o")
 
 add_custom_command(
     OUTPUT "${FUZZ_BIN}"
 
-    # 步骤 1：通过 RLC 官方 --fuzzer 参数生成 LLVM IR
-    # 辅助脚本使用 OUTPUT_FILE 接收 RLC 标准输出，不依赖 Shell 的 > 符号
+    # Step 1. Generate LLVM IR using RLC's built-in --fuzzer option.
+    # The helper captures RLC standard output with OUTPUT_FILE, without shell > redirection.
     COMMAND "${CMAKE_COMMAND}"
         "-DMODE=ir"
         "-DRLC=${RLC}"
@@ -145,41 +145,41 @@ add_custom_command(
         "-DOUTPUT=${RAW_IR}"
         -P "${HELPER}"
 
-    # 步骤 2：添加 AddressSanitizer 插桩
+    # Step 2. Add AddressSanitizer instrumentation.
     COMMAND "${LLVM_OPT}"
         -S -passes=forceattrs,asan
         -force-attribute=sanitize_address
         "${RAW_IR}" -o "${ASAN_IR}"
 
-    # 步骤 3：LLVM IR 编译为 .o 目标文件
+    # Step 3. Compile the LLVM IR to a .o object file.
     COMMAND "${CLANG}"
         -g -O0 -fno-omit-frame-pointer
         -c "${ASAN_IR}" -o "${ASAN_OBJ}"
 
-    # 步骤 4：链接 LLVM libFuzzer Runtime 和 RLC 适配库
+    # Step 4. Link the LLVM libFuzzer runtime and the RLC adapter library.
     COMMAND "${CLANG}"
         -g -isysroot "${MACOS_SDK}"
         -fsanitize=fuzzer,address
         "${ASAN_OBJ}" "${FUZZ_ADAPTER}"
         -o "${FUZZ_BIN}"
 
-    # DEPENDS 表示：修改游戏代码、Fuzzer 入口或辅助脚本后，需要重新执行 Fuzzer 构建。
-    # BYPRODUCTS 表示：除了主要输出 game_fuzzer，这个命令还会产生三个中间文件。
+    # DEPENDS rebuilds the Fuzzer when the game source, Fuzzer entry point, or helper script changes.
+    # BYPRODUCTS lists the three intermediate files this command produces alongside the main output game_fuzzer.
     DEPENDS "${GAME_SOURCE}" "${FUZZ_SOURCE}" "${HELPER}"
     BYPRODUCTS "${RAW_IR}" "${ASAN_IR}" "${ASAN_OBJ}"
     WORKING_DIRECTORY "${SRC}"
-    COMMENT "构建 RLC Fuzzer（含 ASan 插桩）"
+    COMMENT "Build the RLC Fuzzer with ASan instrumentation"
     VERBATIM
 )
 add_custom_target(fuzzer_build ALL DEPENDS "${FUZZ_BIN}")
 
 # ==========================================================
-# 5. CTest：游戏、单元测试、ASan 短测、Fuzzer 测试
+# 5. CTest suite: game, unit, short ASan, and fuzzer tests
 # ==========================================================
-# 测试 1：游戏 main() 返回 0 表示成功
+# Test 1 passes when the game's main() returns 0.
 add_test(NAME game_test COMMAND "${GAME_BIN}")
 
-# 测试 2：运行 rlc-test，把输出写到 temp/test/unit_test.log
+# Test 2 runs rlc-test and writes its output to temp/test/unit_test.log.
 add_test(NAME unit_test
     COMMAND "${CMAKE_COMMAND}"
         "-DMODE=unit"
@@ -190,7 +190,7 @@ add_test(NAME unit_test
         -P "${HELPER}"
 )
 
-# 测试 3：同一个带 ASan 插桩的 Fuzzer 做 100 次短测试
+# Test 3 uses the same ASan-instrumented fuzzer for a short 100-run test.
 add_test(NAME sanitizer_test
     COMMAND "${FUZZ_BIN}"
         -runs=100 -seed=418 -max_len=256 -timeout=5
@@ -198,7 +198,7 @@ add_test(NAME sanitizer_test
         "${ASAN_TEMP}/corpus"
 )
 
-# 测试 4：使用独立 corpus 执行 10,000 次覆盖率引导的 Fuzzing
+# Test 4 performs 10,000 runs of coverage-guided fuzzing with a separate corpus.
 add_test(NAME fuzzer_test
     COMMAND "${FUZZ_BIN}"
         -runs=10000 -seed=418 -max_len=256 -timeout=5
@@ -214,25 +214,25 @@ set_tests_properties(sanitizer_test fuzzer_test PROPERTIES
 )
 
 # ==========================================================
-# 6. 一键构建和执行全部测试
+# 6. Build and run all tests with one command
 # ==========================================================
-# CMAKE_CTEST_COMMAND：指向 CTest 可执行程序
-# --output-on-failure：测试失败时显示对应的测试输出
-# --output-log：将 CTest 输出保存到日志文件
-# WORKING_DIRECTORY：指定执行 CTest 的工作目录
-# USES_TERMINAL：让构建命令使用终端，方便显示测试过程
+# CMAKE_CTEST_COMMAND points to the CTest executable.
+# --output-on-failure shows output from failed tests.
+# --output-log saves CTest output to a log file.
+# WORKING_DIRECTORY sets the directory from which CTest runs.
+# USES_TERMINAL gives the build command access to the terminal so test progress is visible.
 add_custom_target(verify_all
     COMMAND "${CMAKE_CTEST_COMMAND}"
         --output-on-failure
         --output-log "${TEST_TEMP}/ctest.log"
     WORKING_DIRECTORY "${BUILD}"
-    COMMENT "运行全部游戏测试"
+    COMMENT "Run all game tests"
     USES_TERMINAL
     VERBATIM
 )
-# verify_all 必须先完成 game_build 和 fuzzer_build，才能执行测试
+# verify_all must complete game_build and fuzzer_build before running the tests.
 add_dependencies(verify_all game_build fuzzer_build)
 
-message(STATUS "RulebookGame 配置完成")
-message(STATUS "最终可执行文件：${RESULT_DIR}")
-message(STATUS "编译及测试中间文件：${TEMP_DIR}")
+message(STATUS "RulebookGame configuration complete")
+message(STATUS "Final executables are in ${RESULT_DIR}")
+message(STATUS "Build and test intermediate files are in ${TEMP_DIR}")

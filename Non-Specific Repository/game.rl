@@ -44,10 +44,10 @@ act play() -> Game:
     # Step 1: Initialize & Ante
     frm player0 : Player
     frm player1 : Player
-    frm init_pot = player0.contribution + player1.contribution    # 底池初始赌注
-    frm now_pot = init_pot                                       # 底池当前赌注
+    frm init_pot = player0.contribution + player1.contribution    # Initial pot size
+    frm now_pot = init_pot                                       # Current pot size
     frm is_p1_bet = false
-    frm winner = -1                                              # 是否已经有玩家胜出
+    frm winner = -1                                              # Whether a player has won
 
     # Step 2: Deal
     act deal(Int card1, Int card2){
@@ -67,7 +67,7 @@ act play() -> Game:
             update_contribution_and_pot(player0, now_pot)
 
     # Step 5: Player 1 Decision
-    # p0下注的情况下，if条件成立
+    # The if condition is true when Player 0 bets.
     if now_pot > init_pot:
         actions:
             act p1_fold()
@@ -83,7 +83,7 @@ act play() -> Game:
                 is_p1_bet = true
 
 
-    # p1也下注的情况下,交互行为再次流转到p0
+    # If Player 1 bets, play returns to Player 0.
     if is_p1_bet == true:
         actions:
             act p0_fold()

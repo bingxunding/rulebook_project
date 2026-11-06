@@ -1,8 +1,8 @@
 import game
 import action
 
-# FUZZ_TRACE = 0 不打印每个执行的 Action
-# FUZZ_TRACE = 1 打印合法且已执行的 Action；游戏结束时打印提示
+# FUZZ_TRACE = 0 suppresses output for each executed action.
+# FUZZ_TRACE = 1 prints legal actions that were executed and a message when the game ends.
 const FUZZ_TRACE = 0
 
 fun fuzz(Vector<Byte> input):
