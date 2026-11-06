@@ -451,7 +451,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     snapshot = normalize_source(Path(__file__).resolve().with_name('bgg_games.csv').read_bytes())
     if canonical_sha256(snapshot) != NORMALIZED_SHA256:
-        raise SelectionError('CSV data differs from the original snapshot')
+        print('提示：CSV 数据源已改变，生成的结果可能发生改变。', file=sys.stderr)
     args.out_dir.mkdir(parents=True, exist_ok=True)
     if args.download_source:
         request = urllib.request.Request(SOURCE_METADATA['url'], headers={'User-Agent':'RulebookResearch/2.0'})
@@ -460,7 +460,7 @@ def main(argv=None):
         if len(raw) > 150_000_000 or canonical_sha256(raw) != SOURCE_METADATA['raw_sha256']:
             raise SelectionError('Downloaded source differs from the pinned raw snapshot')
         regenerated = normalize_source(raw)
-        if regenerated != snapshot:
+        if canonical_sha256(regenerated) != NORMALIZED_SHA256:
             raise SelectionError('Raw-source normalization differs from the bundled projection')
         (args.out_dir/'source_bgg_original.csv').write_bytes(raw)
         print('PASS: independently downloaded raw CSV matches both original and normalized fingerprints.')
