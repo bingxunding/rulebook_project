@@ -1,3 +1,4 @@
+
 # AGENTS.md
 
 ## 目标与修改范围
@@ -21,10 +22,9 @@
 
 ## 构建与验证
 
-在模板仓库根目录执行。现有工具链面向 Apple Silicon macOS，使用 macOS SDK 和 Conda 环境中的 LLVM 22。首次安装环境时运行 `conda env create -f environment.yml`。
+在模板仓库根目录执行。现有工具链面向 Apple Silicon macOS，使用 macOS SDK 和 Conda 环境中的 LLVM 22。构建前确保已激活具备所需工具和依赖的 Conda 环境（环境名称不限），可参考 `environment.yml`。
 
 ```sh
-conda activate rulebook
 cmake -S . -B build_cmake -G Ninja
 cmake --build build_cmake --target verify_all
 ```
