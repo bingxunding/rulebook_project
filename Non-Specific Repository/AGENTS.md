@@ -5,7 +5,7 @@
 
 Use the natural-language rules provided by the user to implement a Rulebook game that can be compiled and verified. Follow those rules and clarify any ambiguity that could affect game outcomes before proceeding.
 
-The four `.rl` files currently contain a Kuhn Poker example. For a new game, replace their implementations as needed and keep their filenames and entry points. Preserve `CMakeLists.txt`, `cmake/`, and `environment.yml` as shared build and verification infrastructure. These guidelines define what agents may edit. The runtime environment controls file permissions.
+The Kuhn Poker example lives in `examples/kuhn_poker/`. Use it as a reference for new games. Generate the four `.rl` files listed below at the repository root, using the specified filenames and entry points. Preserve the example and the shared build and verification infrastructure in `CMakeLists.txt`, `cmake/`, and `environment.yml`. These guidelines define what agents may edit. The runtime environment controls file permissions.
 
 ## File Conventions
 
@@ -16,13 +16,13 @@ The four `.rl` files currently contain a Kuhn Poker example. For a new game, rep
 
 ## Rulebook Development
 
-- Follow the Action Function example in `game.rl`, such as `act play() -> Game`. Use `act` to declare actions, `actions:` to express alternatives at the same stage, and `frm` to store state across actions.
+- Follow the Action Function example in `examples/kuhn_poker/game.rl`, such as `act play() -> Game`. Use `act` to declare actions, `actions:` to express alternatives at the same stage, and `frm` to store state across actions.
 - Write preconditions in `{ ... }` after the action declaration. Use `can state.action(...)` to check whether an action is legal in the current state and `is_done()` to check whether the game has ended.
 - Use the current example and the compiler and standard library versions specified by `environment.yml` as your baseline. Verify that any new syntax or API is supported before using it. For language features, see the [Rulebook Language Reference](https://rl-language.github.io/language-reference.html).
 
 ## Build and Verification
 
-Run these commands from the template repository root. The toolchain targets Apple Silicon macOS and uses the macOS SDK and LLVM 22 from a Conda environment. Before building, activate a Conda environment with the required tools and dependencies. Any environment name is acceptable. See `environment.yml`.
+Once all four generated `.rl` files are in place, run these commands from the repository root. The toolchain targets Apple Silicon macOS and uses the macOS SDK and LLVM 22 from a Conda environment. Before building, activate a Conda environment with the required tools and dependencies. Any environment name is acceptable. See `environment.yml`.
 
 ```sh
 cmake -S . -B build_cmake -G Ninja
