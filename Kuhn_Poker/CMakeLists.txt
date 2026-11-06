@@ -4,8 +4,6 @@ cmake_minimum_required(VERSION 3.20)
 project(KuhnPoker LANGUAGES NONE)
 
 # 启用 CTest
-# dingbingxun_temp_code
-# 这个就是为了开启CTest的吗？那不开启会怎么样
 enable_testing()
 
 # ==========================================================
