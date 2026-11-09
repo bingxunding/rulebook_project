@@ -4,6 +4,7 @@
 ## Goal and Scope
 
 Use the natural-language rules provided by the user to implement a Rulebook game that can be compiled and verified. Follow those rules and clarify any ambiguity that could affect game outcomes before proceeding.
+The game rules are provided as PDF files under `input/`, for example `input/rules.pdf`.
 
 The Kuhn Poker example lives in `examples/kuhn_poker/`. Use it as a reference for new games. Generate the four `.rl` files listed below at the repository root, using the specified filenames and entry points. Preserve the example and the shared build and verification infrastructure in `CMakeLists.txt`, `cmake/`, and `environment.yml`. These guidelines define what agents may edit. The runtime environment controls file permissions.
 
