@@ -1,3 +1,6 @@
+-------------------------------------------------------------------------------------
+ENGLISH VERSION
+-------------------------------------------------------------------------------------
 # Kuhn Poker (Rulebook)
 Kuhn Poker implemented in Rulebook, using CMake to build the game example and a libFuzzer program with AddressSanitizer (ASan), and CTest to run tests automatically, including trace-based testing with `rlc-action`.
 
@@ -137,7 +140,8 @@ The example has no interactive interface or printed output; exit code `0` indica
 Data for the two fuzz tests is stored in `build_cmake/temp/Sanitizer/` and `build_cmake/temp/fuzzer/`, respectively: `corpus/` holds the input collection, and `artifacts/` holds inputs that trigger errors.
 
 -------------------------------------------------------------------------------------
-
+CHINESE VERSION
+-------------------------------------------------------------------------------------
 # Kuhn Poker（Rulebook）
 使用 Rulebook 实现 Kuhn Poker，以 CMake 构建游戏示例和带 AddressSanitizer（ASan）的 libFuzzer 程序，通过 CTest 自动运行测试，包括使用 `rlc-action` 的基于轨迹的测试。
 
