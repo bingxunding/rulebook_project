@@ -1,0 +1,4 @@
+# game 0
+deal {card1: J, card2: Q} 
+p0_bet {}
+p1_fold {}

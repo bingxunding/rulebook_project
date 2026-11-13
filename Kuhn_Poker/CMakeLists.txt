@@ -26,6 +26,10 @@ find_program(RLC NAMES rlc
 find_program(RLC_TEST NAMES rlc-test
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
+# Locate the Rulebook trace replay tool in the active Conda environment.
+find_program(RLC_ACTION NAMES rlc-action
+    PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
 # clang-22是LLVM 22 编译和链接工具
 find_program(CLANG NAMES clang-22
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
@@ -212,6 +216,22 @@ set_tests_properties(sanitizer_test fuzzer_test PROPERTIES
     TIMEOUT 180
     RUN_SERIAL TRUE
 )
+
+# Test 5: replay a fixed trace and check the expected final game state.
+add_test(NAME trace_test
+    COMMAND "${CMAKE_COMMAND}"
+        "-DMODE=trace"
+        "-DRLC_ACTION=${RLC_ACTION}"
+        "-DRLC=${RLC}"
+        "-DSOURCE=${GAME_SOURCE}"
+        "-DSOURCE_DIR=${SRC}"
+        "-DTRACE_FILE=${SRC}/traces/game1.txt"
+        "-DEXPECTED_FILE=${SRC}/traces/game1.expected.txt"
+        "-DOUTPUT=${TEST_TEMP}/trace_test.log"
+        -P "${HELPER}"
+)
+
+set_tests_properties(trace_test PROPERTIES TIMEOUT 90)
 
 # ==========================================================
 # 6. 一键构建和执行全部测试

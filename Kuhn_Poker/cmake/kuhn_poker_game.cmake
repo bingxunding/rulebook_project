@@ -61,6 +61,52 @@ elseif(MODE STREQUAL "unit")
 
     message(STATUS "单元测试通过，日志：${OUTPUT}")
 
+elseif(MODE STREQUAL "trace")
+    # Replay a fixed action trace and compare its final state.
+    if(NOT EXISTS "${TRACE_FILE}" OR NOT EXISTS "${EXPECTED_FILE}")
+        message(FATAL_ERROR "Missing trace or expected state file")
+    endif()
+
+    execute_process(
+        COMMAND "${RLC_ACTION}" "${SOURCE}" "${TRACE_FILE}"
+            --rlc "${RLC}"
+        WORKING_DIRECTORY "${SOURCE_DIR}"
+        OUTPUT_VARIABLE TRACE_STDOUT
+        ERROR_VARIABLE TRACE_STDERR
+        RESULT_VARIABLE TRACE_RESULT
+        TIMEOUT 60
+    )
+
+    file(WRITE "${OUTPUT}" "${TRACE_STDOUT}\n${TRACE_STDERR}")
+
+    if(NOT "${TRACE_RESULT}" STREQUAL "0")
+        message(FATAL_ERROR
+            "Trace execution failed:\n${TRACE_STDOUT}\n${TRACE_STDERR}")
+    endif()
+
+    # Some tool versions may report invalid actions without a nonzero exit code.
+    if("${TRACE_STDOUT}\n${TRACE_STDERR}" MATCHES
+       "Cannot parse the following action|Cannot apply|Invalid action")
+        message(FATAL_ERROR
+            "Invalid action in trace:\n${TRACE_STDOUT}\n${TRACE_STDERR}")
+    endif()
+
+    file(READ "${EXPECTED_FILE}" EXPECTED_STATE)
+    string(STRIP "${EXPECTED_STATE}" EXPECTED_STATE)
+    string(STRIP "${TRACE_STDOUT}" TRACE_STDOUT)
+
+    # The observed rlc-action output ends with a single-line serialized state.
+    string(REGEX MATCH "[^\r\n]+$" ACTUAL_STATE "${TRACE_STDOUT}")
+    string(STRIP "${ACTUAL_STATE}" ACTUAL_STATE)
+
+    if("${EXPECTED_STATE}" STREQUAL "" OR
+       NOT "${ACTUAL_STATE}" STREQUAL "${EXPECTED_STATE}")
+        message(FATAL_ERROR
+            "Unexpected final state:\nExpected: ${EXPECTED_STATE}\nActual: ${ACTUAL_STATE}\nLog: ${OUTPUT}")
+    endif()
+
+    message(STATUS "Trace test passed. Log: ${OUTPUT}")
+
 else()
     message(FATAL_ERROR "不支持的 MODE：${MODE}")
 endif()

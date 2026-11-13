@@ -6,7 +6,7 @@ import kuhn_poker
 fun main() -> Int:
     let game = play()
 
-    game.deal(2, 0)
+    game.deal(CardNumber::K, CardNumber::J)
     game.p0_bet()
     game.p1_fold()
 

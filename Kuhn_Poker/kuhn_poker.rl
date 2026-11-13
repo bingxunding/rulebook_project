@@ -50,15 +50,15 @@ act play() -> Game:
     frm winner = -1                                              # 是否已经有玩家胜出
 
     # Step 2: Deal
-    act deal(Int card1, Int card2){
-        card1 >= CardNumber::J.value and
-        card1 <= CardNumber::K.value and
-        card2 >= CardNumber::J.value and
-        card2 <= CardNumber::K.value and
-        card1 != card2
+    act deal(CardNumber card1, CardNumber card2){
+        card1.value >= CardNumber::J.value and
+        card1.value <= CardNumber::K.value and
+        card2.value >= CardNumber::J.value and
+        card2.value <= CardNumber::K.value and
+        card1.value != card2.value
     }
-        player0.card = card1
-        player1.card = card2
+        player0.card = card1.value
+        player1.card = card2.value
 
     # Step 4: Player 0 Decision
     actions:

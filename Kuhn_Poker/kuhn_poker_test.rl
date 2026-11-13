@@ -1,6 +1,12 @@
+
 # Kuhn Poker 可以枚举 6 种有序发牌 × 5 条终局行动路线，共 30 种组合。
 # 五条路线是：下注→弃牌、下注→跟注、过牌→过牌、过牌→下注→弃牌、过牌→下注→跟注。
 import kuhn_poker
+
+fun card_number_from_int(Int value) -> CardNumber:
+    let card : CardNumber
+    card.value = value
+    return card
 
 # Test 1: Initial State
 fun test_initial_state() -> Bool:
@@ -16,7 +22,7 @@ fun test_initial_state() -> Bool:
 # Test 2: Bet -> Fold
 fun test_bet_fold() -> Bool:
     let game = play()
-    game.deal(2, 0)
+    game.deal(CardNumber::K, CardNumber::J)
     game.p0_bet()
     game.p1_fold()
     if !game.is_done():
@@ -32,7 +38,7 @@ fun test_bet_fold() -> Bool:
 # Test 3: Bet -> Call
 fun test_bet_call() -> Bool:
     let game = play()
-    game.deal(2, 0)
+    game.deal(CardNumber::K, CardNumber::J)
     game.p0_bet()
     game.p1_call()
     if !game.is_done():
@@ -49,7 +55,7 @@ fun test_bet_call() -> Bool:
 # Helpers for the additional rule tests. Querying can does not execute an action.
 fun count_available_actions(Game game) -> Int:
     let count = 0
-    if can game.deal(2, 0):
+    if can game.deal(CardNumber::K, CardNumber::J):
         count = count + 1
     if can game.p0_check():
         count = count + 1
@@ -96,7 +102,7 @@ fun test_all_deals_bet_fold() -> Bool:
         while card1 < 3:
             if card0 != card1:
                 let game = play()
-                game.deal(card0, card1)
+                game.deal(card_number_from_int(card0), card_number_from_int(card1))
                 game.p0_bet()
                 game.p1_fold()
                 if !check_finished_game(game, card0, card1, 3, 2, 1, 0, 1):
@@ -112,7 +118,7 @@ fun test_all_deals_bet_call() -> Bool:
         while card1 < 3:
             if card0 != card1:
                 let game = play()
-                game.deal(card0, card1)
+                game.deal(card_number_from_int(card0), card_number_from_int(card1))
                 game.p0_bet()
                 game.p1_call()
                 let winner = 1
@@ -133,7 +139,7 @@ fun test_all_deals_check_check() -> Bool:
         while card1 < 3:
             if card0 != card1:
                 let game = play()
-                game.deal(card0, card1)
+                game.deal(card_number_from_int(card0), card_number_from_int(card1))
                 game.p0_check()
                 game.p1_check()
                 let winner = 1
@@ -154,7 +160,7 @@ fun test_all_deals_check_bet_fold() -> Bool:
         while card1 < 3:
             if card0 != card1:
                 let game = play()
-                game.deal(card0, card1)
+                game.deal(card_number_from_int(card0), card_number_from_int(card1))
                 game.p0_check()
                 game.p1_bet()
                 game.p0_fold()
@@ -171,7 +177,7 @@ fun test_all_deals_check_bet_call() -> Bool:
         while card1 < 3:
             if card0 != card1:
                 let game = play()
-                game.deal(card0, card1)
+                game.deal(card_number_from_int(card0), card_number_from_int(card1))
                 game.p0_check()
                 game.p1_bet()
                 game.p0_call()
@@ -194,22 +200,22 @@ fun test_deal_preconditions() -> Bool:
         let card1 = -1
         while card1 < 4:
             let expected = card0 >= 0 and card0 < 3 and card1 >= 0 and card1 < 3 and card0 != card1
-            if (can game.deal(card0, card1)) != expected:
+            if (can game.deal(card_number_from_int(card0), card_number_from_int(card1))) != expected:
                 return false
             card1 = card1 + 1
         card0 = card0 + 1
     # Legality queries must leave the game ready for the first deal.
     if game.is_done() or game.now_pot != 2:
         return false
-    game.deal(2, 0)
+    game.deal(CardNumber::K, CardNumber::J)
     return game.player0.card == 2 and game.player1.card == 0
 
 # Test 10: only the correct player's actions are available at each decision.
 fun test_action_order() -> Bool:
     let game = play()
-    if count_available_actions(game) != 1 or !(can game.deal(2, 0)):
+    if count_available_actions(game) != 1 or !(can game.deal(CardNumber::K, CardNumber::J)):
         return false
-    game.deal(2, 0)
+    game.deal(CardNumber::K, CardNumber::J)
     if game.is_done() or count_available_actions(game) != 2:
         return false
     if !(can game.p0_check()) or !(can game.p0_bet()):
@@ -235,7 +241,7 @@ fun test_action_order() -> Bool:
         return false
 
     let bet_game = play()
-    bet_game.deal(0, 2)
+    bet_game.deal(CardNumber::J, CardNumber::K)
     bet_game.p0_bet()
     if bet_game.is_done() or count_available_actions(bet_game) != 2:
         return false
