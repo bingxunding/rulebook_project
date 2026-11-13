@@ -1,6 +1,6 @@
 
-# Kuhn Poker 可以枚举 6 种有序发牌 × 5 条终局行动路线，共 30 种组合。
-# 五条路线是：下注→弃牌、下注→跟注、过牌→过牌、过牌→下注→弃牌、过牌→下注→跟注。
+# Kuhn Poker has 6 ordered deals × 5 terminal action sequences, for a total of 30 combinations.
+# The five sequences are Bet→Fold, Bet→Call, Check→Check, Check→Bet→Fold, and Check→Bet→Call.
 import kuhn_poker
 
 fun card_number_from_int(Int value) -> CardNumber:
