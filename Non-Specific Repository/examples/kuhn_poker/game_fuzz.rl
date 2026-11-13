@@ -1,8 +1,8 @@
 import game
 import action
 
-# FUZZ_TRACE = 0 suppresses output for each executed action.
-# FUZZ_TRACE = 1 prints legal actions that were executed and a message when the game ends.
+# FUZZ_TRACE = 0 skips printing executed Actions
+# FUZZ_TRACE = 1 prints each legal Action after execution and prints a message when the game ends
 const FUZZ_TRACE = 0
 
 fun fuzz(Vector<Byte> input):

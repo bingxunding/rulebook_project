@@ -213,6 +213,21 @@ set_tests_properties(sanitizer_test fuzzer_test PROPERTIES
     RUN_SERIAL TRUE
 )
 
+# Test 5 discovers and replays the action traces at test time.
+add_test(NAME trace_test
+    COMMAND "${CMAKE_COMMAND}"
+        "-DMODE=trace"
+        "-DCONDA_BIN=${CONDA_BIN}"
+        "-DRLC=${RLC}"
+        "-DSOURCE=${GAME_SOURCE}"
+        "-DSOURCE_DIR=${SRC}"
+        "-DTRACE_DIR=${SRC}/traces"
+        "-DLOG_DIR=${TEST_TEMP}/traces"
+        -P "${HELPER}"
+)
+# The runner times out each replay independently of the number of traces.
+set_tests_properties(trace_test PROPERTIES TIMEOUT 0)
+
 # ==========================================================
 # 6. Build and run all tests with one command
 # ==========================================================

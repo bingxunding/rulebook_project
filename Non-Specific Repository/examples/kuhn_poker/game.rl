@@ -47,18 +47,18 @@ act play() -> Game:
     frm init_pot = player0.contribution + player1.contribution    # Initial pot size
     frm now_pot = init_pot                                       # Current pot size
     frm is_p1_bet = false
-    frm winner = -1                                              # Whether a player has won
+    frm winner = -1                                              # Tracks whether a player has already won
 
     # Step 2: Deal
-    act deal(Int card1, Int card2){
-        card1 >= CardNumber::J.value and
-        card1 <= CardNumber::K.value and
-        card2 >= CardNumber::J.value and
-        card2 <= CardNumber::K.value and
-        card1 != card2
+    act deal(CardNumber card1, CardNumber card2){
+        card1.value >= CardNumber::J.value and
+        card1.value <= CardNumber::K.value and
+        card2.value >= CardNumber::J.value and
+        card2.value <= CardNumber::K.value and
+        card1.value != card2.value
     }
-        player0.card = card1
-        player1.card = card2
+        player0.card = card1.value
+        player1.card = card2.value
 
     # Step 4: Player 0 Decision
     actions:
@@ -67,7 +67,7 @@ act play() -> Game:
             update_contribution_and_pot(player0, now_pot)
 
     # Step 5: Player 1 Decision
-    # The if condition is true when Player 0 bets.
+    # The if condition is true when p0 bets
     if now_pot > init_pot:
         actions:
             act p1_fold()
@@ -83,7 +83,7 @@ act play() -> Game:
                 is_p1_bet = true
 
 
-    # If Player 1 bets, play returns to Player 0.
+    # If p1 bets, play passes back to p0
     if is_p1_bet == true:
         actions:
             act p0_fold()

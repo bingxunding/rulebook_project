@@ -2,6 +2,7 @@
 # CMake runs this script with cmake -P. No separate invocation is needed.
 # MODE=ir   : Generate LLVM IR with RLC's built-in Fuzzer mode.
 # MODE=unit : Run RLC unit tests and save the output.
+# MODE=trace: Replay action traces and compare their final states.
 
 if(NOT DEFINED MODE)
     message(FATAL_ERROR "Missing MODE argument")
@@ -60,6 +61,70 @@ elseif(MODE STREQUAL "unit")
     endif()
 
     message(STATUS "Unit tests passed. See the log at ${OUTPUT}")
+
+elseif(MODE STREQUAL "trace")
+    cmake_policy(SET CMP0054 NEW)
+    file(GLOB trace_files LIST_DIRECTORIES false RELATIVE "${TRACE_DIR}"
+        "${TRACE_DIR}/*.trace.txt")
+    # CMake globs case-insensitively on macOS.
+    list(FILTER trace_files INCLUDE REGEX "\\.trace\\.txt$")
+    if(NOT trace_files)
+        message(FATAL_ERROR "No *.trace.txt files found in ${TRACE_DIR}")
+    endif()
+
+    find_program(RLC_ACTION NAMES rlc-action PATHS "${CONDA_BIN}" NO_DEFAULT_PATH)
+    file(MAKE_DIRECTORY "${LOG_DIR}")
+    foreach(trace_file IN LISTS trace_files)
+        string(REGEX REPLACE "\\.trace\\.txt$" "" trace_name "${trace_file}")
+        set(expected_file "${TRACE_DIR}/${trace_name}.expected.txt")
+        set(log_file "${LOG_DIR}/${trace_name}.log")
+        set(log "Trace: ${TRACE_DIR}/${trace_file}\nExpected state file: ${expected_file}\n")
+        set(failure "")
+
+        execute_process(
+            COMMAND "${CMAKE_COMMAND}" -E cat "${expected_file}"
+            OUTPUT_VARIABLE expected_state ERROR_VARIABLE read_error
+            RESULT_VARIABLE read_result TIMEOUT 5
+        )
+        if(NOT "${read_result}" STREQUAL "0")
+            set(failure "Could not read expected state file (${read_result}): ${expected_file}\n${read_error}")
+        elseif(NOT RLC_ACTION)
+            set(failure "rlc-action was not found in ${CONDA_BIN}")
+        else()
+            execute_process(
+                COMMAND "${RLC_ACTION}" "${SOURCE}" "${TRACE_DIR}/${trace_file}" --rlc "${RLC}"
+                WORKING_DIRECTORY "${SOURCE_DIR}"
+                OUTPUT_VARIABLE trace_stdout ERROR_VARIABLE trace_stderr
+                RESULT_VARIABLE trace_result TIMEOUT 60
+            )
+            string(APPEND log "rlc-action result: ${trace_result}\n"
+                "\nstdout:\n${trace_stdout}\n\nstderr:\n${trace_stderr}\n")
+
+            string(STRIP "${expected_state}" expected_state)
+            string(STRIP "${trace_stdout}" actual_state)
+            # The final nonblank stdout line is the serialized state.
+            string(REGEX MATCH "[^\r\n]+$" actual_state "${actual_state}")
+            string(STRIP "${actual_state}" actual_state)
+
+            if(NOT "${trace_result}" STREQUAL "0")
+                set(failure "Trace replay failed (${trace_result})")
+            # An action parse error can still produce a zero exit status.
+            elseif("${trace_stdout}\n${trace_stderr}" MATCHES
+                   "(^|[\r\n])(Cannot parse the following action:|Cannot apply the following action:|Invalid action)")
+                set(failure "rlc-action reported an invalid action")
+            elseif("${expected_state}" STREQUAL "" OR NOT "${actual_state}" STREQUAL "${expected_state}")
+                set(failure "Unexpected final state.\nExpected: ${expected_state}\nActual: ${actual_state}")
+            endif()
+        endif()
+
+        if(failure)
+            file(WRITE "${log_file}" "${log}\nFAIL: ${failure}\n")
+            message(SEND_ERROR "${trace_file}: ${failure}\nLog: ${log_file}")
+        else()
+            file(WRITE "${log_file}" "${log}\nPASS\n")
+            message(STATUS "${trace_file} passed. Log: ${log_file}")
+        endif()
+    endforeach()
 
 else()
     message(FATAL_ERROR "Unsupported MODE ${MODE}")

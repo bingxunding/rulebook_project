@@ -1,0 +1,1 @@
+{resume_index: -1, player0: {contribution: 2, card: 0, reward: 1}, player1: {contribution: 1, card: 1, reward: -1}, init_pot: 2, now_pot: 3, is_p1_bet: false, winner: 0}
