@@ -1,18 +1,18 @@
 
-# 此文件通过 cmake -P 执行，不需要单独运行。
-# MODE=ir   : 使用 RLC 官方 Fuzzer 模式生成 LLVM IR。
-# MODE=unit : 执行 RLC 单元测试并保存输出。
+# The build invokes this helper with cmake -P.
+# MODE=ir   : Generate LLVM IR using RLC's built-in fuzzer mode.
+# MODE=unit : Run the RLC unit tests and save their output.
 
 if(NOT DEFINED MODE)
-    message(FATAL_ERROR "缺少 MODE 参数")
+    message(FATAL_ERROR "Missing MODE argument")
 endif()
 
 if(MODE STREQUAL "ir")
-    # RLC 的 --ir 输出写入指定文件，代替 Shell 的 > 重定向。
-    # MODE=ir：生成 LLVM IR
-    # OUTPUT_FILE：RLC 的标准输出，即 LLVM IR
-    # ERROR_VARIABLE：	RLC 输出的错误信息
-    # RESULT_VARIABLE   	RLC 的退出状态
+    # Write RLC's --ir output directly to the specified file in place of shell redirection.
+    # MODE=ir generates LLVM IR.
+    # OUTPUT_FILE captures RLC's LLVM IR from standard output.
+    # ERROR_VARIABLE captures RLC's error output.
+    # RESULT_VARIABLE captures RLC's exit status.
     execute_process(
         COMMAND "${RLC}" "${SOURCE}"
             -i "${INCLUDE_DIR}"
@@ -22,28 +22,28 @@ if(MODE STREQUAL "ir")
         RESULT_VARIABLE RESULT
     )
 
-    # 用于检测编译失败
+    # Check for a compilation failure.
     if(NOT "${RESULT}" STREQUAL "0")
         file(REMOVE "${OUTPUT}")
-        message(FATAL_ERROR "RLC 生成 LLVM IR 失败：\n${ERROR_MSG}")
+        message(FATAL_ERROR "RLC failed to generate LLVM IR:\n${ERROR_MSG}")
     endif()
 
     if(NOT EXISTS "${OUTPUT}")
-        message(FATAL_ERROR "RLC 未生成 LLVM IR：${OUTPUT}")
+        message(FATAL_ERROR "RLC did not generate LLVM IR: ${OUTPUT}")
     endif()
 
-    # 用于进一步检查生成的 IR 文件是否为空，因为之前遇到过RLC 链接失败，却留下空可执行文件的问题
+    # Check that the IR file is nonempty. An earlier RLC link failure left an empty executable.
     file(SIZE "${OUTPUT}" IR_SIZE)
     if(IR_SIZE EQUAL 0)
-        message(FATAL_ERROR "RLC 生成的 LLVM IR 为空：${OUTPUT}")
+        message(FATAL_ERROR "RLC generated an empty LLVM IR file: ${OUTPUT}")
     endif()
 
 elseif(MODE STREQUAL "unit")
-    # 运行 Rulebook 单元测试；把 stdout 和 stderr 记录到 temp/test。
-    # 相当于执行    rlc-test kuhn_poker_test.rl
-    # TEST_STDOUT：正常输出
-    # TEST_STDERR：错误输出
-    # TEST_RESULT：退出状态
+    # Run the Rulebook unit tests and log stdout and stderr in temp/test.
+    # Equivalent to running rlc-test kuhn_poker_test.rl.
+    # TEST_STDOUT captures standard output.
+    # TEST_STDERR captures standard error.
+    # TEST_RESULT captures the exit status.
     execute_process(
         COMMAND "${RLC_TEST}" "${SOURCE}"
         WORKING_DIRECTORY "${SOURCE_DIR}"
@@ -51,15 +51,15 @@ elseif(MODE STREQUAL "unit")
         ERROR_VARIABLE TEST_STDERR
         RESULT_VARIABLE TEST_RESULT
     )
-    # 把结果写入：build_cmake/temp/test/unit_test.log
+    # Write the results to build_cmake/temp/test/unit_test.log.
     file(WRITE "${OUTPUT}" "${TEST_STDOUT}${TEST_STDERR}")
 
     if(NOT "${TEST_RESULT}" STREQUAL "0")
         message(FATAL_ERROR
-            "Rulebook 单元测试失败：\n${TEST_STDOUT}\n${TEST_STDERR}")
+            "Rulebook unit tests failed:\n${TEST_STDOUT}\n${TEST_STDERR}")
     endif()
 
-    message(STATUS "单元测试通过，日志：${OUTPUT}")
+    message(STATUS "Unit tests passed. Log: ${OUTPUT}")
 
 elseif(MODE STREQUAL "trace")
     # Replay a fixed action trace and compare its final state.
@@ -108,5 +108,5 @@ elseif(MODE STREQUAL "trace")
     message(STATUS "Trace test passed. Log: ${OUTPUT}")
 
 else()
-    message(FATAL_ERROR "不支持的 MODE：${MODE}")
+    message(FATAL_ERROR "Unsupported MODE: ${MODE}")
 endif()
