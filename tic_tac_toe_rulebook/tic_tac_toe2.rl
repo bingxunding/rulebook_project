@@ -10,13 +10,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# 架构参考：
+# Architecture references
 # https://rl-language.github.io/language_tour.html#example-ui-for-tic-tac-toe
 # https://www.llvm.org/devmtg/2025-04/slides/poster/fioravanti_coroutines.pdf
 #
-# Board 是数据；play 是可暂停的规则流程；main 是外部演示驱动。
-# 新接口：play()、game.mark(row, col)、can apply(action, game)、game.is_done()。
-# 原 LoadGame/TicTacToeGame/TicTacToeState/ApplyAction 仿 C++ 层级已移除。
+# Board holds the game data, play runs the rules as a coroutine, and main drives the demo.
+# The new interface provides play(), game.mark(row, col), can apply(action, game), and game.is_done().
+# This interface replaces the C++-style LoadGame, TicTacToeGame, TicTacToeState, and ApplyAction layers.
 
 import action
 import bounded_arg
@@ -36,11 +36,11 @@ fun PlayerToState(Int player) -> CellState {player == 0 or player == 1}:
         return CellState::kCross
     return CellState::kNought
 
-# 玩家 0 = X（先手），玩家 1 = O；棋盘位置 = row * 3 + col。
+# Player 0 plays X and goes first. Player 1 plays O. Index cells as row * 3 + col.
 #   0 1 2
 #   3 4 5
 #   6 7 8
-# 外部可以读取棋盘，但应通过 mark/apply 落子，不直接修改字段。
+# Callers can read the board and should use mark or apply to place a mark and preserve the board state.
 cls Board:
     CellState[9] slots
     Int current_player
@@ -57,21 +57,21 @@ cls Board:
     fun full() -> Bool:
         return self.num_moves == 9
 
-    # 即使外部直接写入 BInt.value，也在访问数组前检查边界。
+    # Check bounds before indexing the array, even if a caller writes directly to BInt.value.
     fun empty(Int row, Int col) -> Bool:
         return row >= 0 and row < 3 and col >= 0 and col < 3 and self.slots[row * 3 + col].value == CellState::kEmpty.value
 
     fun has_line(Int player) -> Bool {player == 0 or player == 1}:
         let c = PlayerToState(player).value
-        # 三行
+        # Three rows.
         let row0 = self.slots[0].value == c and self.slots[1].value == c and self.slots[2].value == c
         let row1 = self.slots[3].value == c and self.slots[4].value == c and self.slots[5].value == c
         let row2 = self.slots[6].value == c and self.slots[7].value == c and self.slots[8].value == c
-        # 三列
+        # Three columns.
         let col0 = self.slots[0].value == c and self.slots[3].value == c and self.slots[6].value == c
         let col1 = self.slots[1].value == c and self.slots[4].value == c and self.slots[7].value == c
         let col2 = self.slots[2].value == c and self.slots[5].value == c and self.slots[8].value == c
-        # 两条对角线
+        # Two diagonals.
         let diag0 = self.slots[0].value == c and self.slots[4].value == c and self.slots[8].value == c
         let diag1 = self.slots[2].value == c and self.slots[4].value == c and self.slots[6].value == c
         return row0 or row1 or row2 or col0 or col1 or col2 or diag0 or diag1
@@ -93,9 +93,9 @@ cls Board:
             cell = cell + 1
         return text
 
-# 编译器生成 Game、GameMark 和 AnyGameAction。
-# frm 字段跨暂停点保留；调用 play() 后停在第一次 mark，等待外部动作。
-# 整个对局的规则仅在此处推进，不依赖 UI、打印或选点策略。
+# The compiler generates Game, GameMark, and AnyGameAction.
+# frm fields persist across suspension points. Calling play() pauses at the first mark until a caller supplies a move.
+# This coroutine handles every game transition independently of the UI, output, and move selection policy.
 @classes
 act play() -> Game:
     frm board: Board
@@ -108,11 +108,11 @@ act play() -> Game:
             winner = board.current_player
             return
         board.current_player = 1 - board.current_player
-    # 棋盘满且无人获胜：结束流程，winner 保持 -3。
-    # return 会让编译器生成的 is_done() 返回 true。
+    # If the board fills with no winner, end the game and leave winner at -3.
+    # Returning from play makes the generated is_done() return true.
     return
 
-# 查询层：终局状态来自协程，不再手动维护 IsTerminal 或 resume_index。
+# Queries use the coroutine to determine when the game is over, replacing manual tracking through IsTerminal or resume_index.
 fun get_current_player(Game game) -> Int:
     if game.is_done():
         return -4
@@ -131,18 +131,18 @@ fun score(Game game, Int player_id) -> Float {player_id == 0 or player_id == 1}:
         return 1.0
     return -1.0
 
-# 对应旧 Returns()，顺序为 [玩家 0, 玩家 1]。
+# Like the earlier Returns(), this returns payoffs in the order [player 0, player 1].
 fun returns(Game game) -> Float[2]:
     let rewards: Float[2]
     rewards[0] = score(game, 0)
     rewards[1] = score(game, 1)
     return rewards
 
-# 枚举的是有限动作空间：3 行 × 3 列，共 9 种。
-# can apply 同时检查动作前置条件和协程所在阶段；终局自动全部不可用。
-# UI 与策略使用同一合法性来源，无须复制“空格/终局”的判断逻辑。
-# 使用模板参数接收生成的动作类型，兼容本机编译器的类型生成顺序。
-# 调用：let prototype: AnyGameAction; legal_actions(game, prototype)。
+# Enumerate all nine possible moves on the 3-by-3 board.
+# can apply checks both the action precondition and the coroutine stage. All moves become unavailable when the game ends.
+# The UI and the move selection policy share the same checks for empty cells and game completion.
+# Use a template parameter for the generated action type to accommodate the local compiler's type generation order.
+# Declare let prototype: AnyGameAction, then call legal_actions(game, prototype).
 fun<T> legal_actions(Game game, T prototype) -> Vector<T>:
     let candidates = enumerate(prototype)
     let legal: Vector<T>
@@ -155,8 +155,8 @@ fun<T> legal_actions(Game game, T prototype) -> Vector<T>:
         i = i + 1
     return legal
 
-# UI 点击入口示例：先验证普通整数，再构造有界坐标，避免转换时截断。
-# 非法输入返回 false，状态保持不变；真正的落子仍通过生成的动作执行。
+# A UI click handler should validate integer coordinates before constructing bounded coordinates to avoid truncation during conversion.
+# Invalid input returns false without changing state. Legal moves use the generated action.
 fun try_mark(Game game, Int row, Int col) -> Bool:
     if row < 0 or row >= 3 or col < 0 or col >= 3:
         return false
@@ -168,12 +168,12 @@ fun try_mark(Game game, Int row, Int col) -> Bool:
         return true
     return false
 
-# 展示层与规则分离，可供终端或外部工具调用。
+# Terminals and external tools can call this display helper independently of the game rules.
 fun pretty_print(Game game):
     print(game.board.to_string())
 
-# 演示策略：选择枚举顺序中的第一个合法动作。
-# 接入真人或 AI 时替换调用方的选点方式，play() 无须修改。
+# The demo picks the first legal move in enumeration order.
+# For human or AI players, replace the caller's move selection policy and reuse play().
 fun<T> select_action(Game game, T prototype) -> T {!game.is_done()}:
     let choices = legal_actions(game, prototype)
     return choices.get(0)
@@ -182,7 +182,7 @@ fun<T> select_action(Game game, T prototype) -> T {!game.is_done()}:
 # cd /Users/dingbingxun/Desktop/rulebook_project/tic_tac_toe_rulebook
 # rlc tic_tac_toe.rl -o tic_tac_toe
 # ./tic_tac_toe
-# 这是自动对局演示，不是图形 UI 或终端交互输入程序。
+# This demo plays a game automatically without a graphical interface or interactive terminal input.
 fun main() -> Int:
     let game = play()
     let prototype: AnyGameAction
