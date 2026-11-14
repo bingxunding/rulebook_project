@@ -1,6 +1,6 @@
 # Rulebook Game Selection
 
-最终版：**10 款，6 款 Weight<2、4 款 2≤Weight<3**。保留蓝色表头、交替行底色及可点击的 BGG / 原始规则 PDF 链接。候选发现由 Python 执行；规则完整性审核是有来源证据的人工/LLM 辅助判断，二者分开保存。
+The final selection contains **10 games, with 6 at Weight < 2 and 4 at 2 ≤ Weight < 3**. The report retains its blue table header, alternating row colors, and links to BGG and the original rule PDFs. Python discovers candidates. Human reviewers use LLM assistance to assess rule completeness against source evidence. The candidate queues and rule audits are stored separately.
 
 ## Selection algorithm
 
@@ -53,6 +53,6 @@ Projection SHA-256: `790a521e28914b6bbc442578bb91e416645d234cb809dcce871e101fe33
 
 Final BGG IDs in display order: `133473, 39856, 50, 98778, 65244, 230802, 394, 2389, 269210, 215`.
 
-To repeat the comparison, run the script with `--out-dir run_1` and `--out-dir run_2` and compare `candidate_queues.json`, `selection_result.json`, and `game_selection_report.html` in both directories.
+The hashes above record the original 4 November runs. The English-only report and audit descriptions have new HTML and selection JSON hashes.
 
-导师审核建议：Dixit 的图片与开放式线索、Tichu 的抢断优先级，以及 Hanabi 原规则中的计分文字笔误，值得 Massimo 重点确认；具体证据在 HTML 可展开审核栏中。它们的入选不代表已证明适合自动生成 `.rl`。现有 Kuhn Poker、CMake 及其他 Rulebook 项目代码未修改。
+To repeat the comparison, run the script with `--out-dir run_1` and `--out-dir run_2` and compare `candidate_queues.json`, `selection_result.json`, and `game_selection_report.html` in both directories.
