@@ -6,7 +6,40 @@
 Use the natural-language rules provided by the user to implement a Rulebook game that can be compiled and verified. Follow those rules and clarify any ambiguity that could affect game outcomes before proceeding.
 The game rules are provided as PDF files under `input/`, for example `input/rules.pdf`.
 
-The Kuhn Poker example lives in `examples/kuhn_poker/`. Use it as a reference for new games. Generate the four `.rl` files listed below at the repository root, using the specified filenames and entry points, and the trace and expected-state files under the root `traces/` directory. For game-generation tasks, edit only these files. Preserve the example and the shared build and verification infrastructure in `CMakeLists.txt`, `cmake/`, and `environment.yml`, as well as `AGENTS.md`. These guidelines define what agents may edit. The runtime environment controls file permissions.
+The Kuhn Poker example lives in `examples/kuhn_poker/`. Use it as a reference for new games. Generate the four `.rl` files listed below at the generated project root, using the specified filenames and entry points, and the trace and expected-state files under the generated project's root `traces/` directory. Also generate `README.md` at the generated project root. For game-generation tasks, edit only these generated files.
+
+Copy the following files without modification from the `Non-Specific Repository/` template directory on the source repository's `main` branch:
+
+- `Non-Specific Repository/CMakeLists.txt` to `<project-root>/CMakeLists.txt`.
+- `Non-Specific Repository/cmake/rulebook_game.cmake` to `<project-root>/cmake/rulebook_game.cmake`.
+- `Non-Specific Repository/environment.yml` to `<project-root>/environment.yml`.
+
+Do not copy these files from `examples/kuhn_poker/` or any other example directory. The Kuhn Poker example is reference material for generating the game implementation, tests, and traces; it is not the source of the generated project's build or environment files.
+
+Preserve the original template, including the example and `AGENTS.md`, without modification. These guidelines define what agents may edit. The runtime environment controls file permissions.
+
+Read `AGENTS.md`, `input/`, and `examples/` from the source template; do not copy them into the generated project. All references to `input/` and `examples/` in these instructions refer to the source template.
+
+The final source tree must contain exactly the following seven root files and two root source directories:
+
+```text
+<project-root>/
+├── CMakeLists.txt
+├── README.md
+├── environment.yml
+├── game.rl
+├── game_main.rl
+├── game_test.rl
+├── game_fuzz.rl
+├── cmake/
+│   └── rulebook_game.cmake
+└── traces/
+    ├── game1.trace.txt
+    ├── game1.expected.txt
+    └── ...
+```
+
+The `traces/` directory must contain only complete `gameN.trace.txt` and `gameN.expected.txt` pairs. Determine the number of pairs according to the game and the testing coverage needed. Do not include other source files or directories. Files and directories automatically produced by configuration, building, and verification, including `build_cmake/`, `result/`, executables, logs, and fuzzing corpora, are permitted and excluded from these source-structure counts.
 
 ## File Conventions
 
@@ -14,6 +47,7 @@ The Kuhn Poker example lives in `examples/kuhn_poker/`. Use it as a reference fo
 - `game_main.rl` loads the game with `import game` and defines `fun main() -> Int`. Run one reproducible legal playthrough and check its expected outcome. Return `0` on success and a nonzero value on failure.
 - `game_test.rl` imports `game` and defines unit tests as `fun test_...() -> Bool` so `rlc-test` can discover them. Derive expected results directly from the rules. Cover the initial state, action order, legal and illegal actions, edge cases, end conditions, and scoring where applicable.
 - `game_fuzz.rl` imports `game` and provides `fun fuzz(Vector<Byte> input)`. Follow the example by using `parse_actions` to turn bytes into actions, then check each action with `can apply` before applying it to exercise the new game's state transitions.
+- `README.md` describes the game, required environment, build and verification commands, and project structure in English.
 
 ## Rulebook Development
 
