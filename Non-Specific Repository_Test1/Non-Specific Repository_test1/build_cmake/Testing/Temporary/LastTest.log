@@ -1,0 +1,282 @@
+Start testing: Nov 19 20:21 CET
+----------------------------------------------------------
+1/5 Testing: game_test
+1/5 Test: game_test
+Command: "/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game"
+Directory: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake
+"game_test" start time: Nov 19 20:21 CET
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.29 sec
+----------------------------------------------------------
+Test Passed.
+"game_test" end time: Nov 19 20:21 CET
+"game_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/5 Testing: unit_test
+2/5 Test: unit_test
+Command: "/opt/homebrew/Caskroom/miniforge/base/envs/rulebook/bin/cmake" "-DMODE=unit" "-DRLC_TEST=/opt/homebrew/Caskroom/miniforge/base/envs/rulebook/bin/rlc-test" "-DSOURCE=/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/game_test.rl" "-DSOURCE_DIR=/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1" "-DOUTPUT=/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/test/unit_test.log" "-P" "/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/cmake/rulebook_game.cmake"
+Directory: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake
+"unit_test" start time: Nov 19 20:21 CET
+Output:
+----------------------------------------------------------
+-- Unit tests passed. See the log at /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/test/unit_test.log
+<end of output>
+Test time =   0.85 sec
+----------------------------------------------------------
+Test Passed.
+"unit_test" end time: Nov 19 20:21 CET
+"unit_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/5 Testing: sanitizer_test
+3/5 Test: sanitizer_test
+Command: "/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer" "-runs=100" "-seed=418" "-max_len=256" "-timeout=5" "-artifact_prefix=/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/Sanitizer/artifacts/" "/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/Sanitizer/corpus"
+Directory: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake
+"sanitizer_test" start time: Nov 19 20:21 CET
+Output:
+----------------------------------------------------------
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 418
+INFO: Loaded 1 modules   (900 inline 8-bit counters): 900 [0x102e5c000, 0x102e5c384), 
+INFO: Loaded 1 PC tables (900 PCs): 900 [0x102e5c388,0x102e5fbc8), 
+INFO:        0 files found in /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/Sanitizer/corpus
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 218 ft: 218 corp: 1/1b exec/s: 0 rss: 34Mb
+#3	NEW    cov: 228 ft: 253 corp: 2/2b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 1 ChangeBit-
+#5	NEW    cov: 228 ft: 263 corp: 3/3b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 2 CopyPart-ChangeBit-
+#6	NEW    cov: 228 ft: 277 corp: 4/4b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 1 ChangeBit-
+#8	NEW    cov: 249 ft: 329 corp: 5/5b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 2 ChangeBit-ChangeBit-
+#10	NEW    cov: 249 ft: 330 corp: 6/6b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 2 ShuffleBytes-ChangeByte-
+#11	NEW    cov: 249 ft: 333 corp: 7/8b lim: 4 exec/s: 0 rss: 34Mb L: 2/2 MS: 1 InsertByte-
+#12	NEW    cov: 249 ft: 334 corp: 8/9b lim: 4 exec/s: 0 rss: 34Mb L: 1/2 MS: 1 ChangeByte-
+#14	NEW    cov: 249 ft: 336 corp: 9/11b lim: 4 exec/s: 0 rss: 34Mb L: 2/2 MS: 2 CopyPart-InsertByte-
+#16	NEW    cov: 249 ft: 337 corp: 10/12b lim: 4 exec/s: 0 rss: 35Mb L: 1/2 MS: 2 CopyPart-EraseBytes-
+#17	NEW    cov: 250 ft: 363 corp: 11/13b lim: 4 exec/s: 0 rss: 35Mb L: 1/2 MS: 1 ChangeByte-
+#18	NEW    cov: 251 ft: 377 corp: 12/16b lim: 4 exec/s: 0 rss: 35Mb L: 3/3 MS: 1 InsertByte-
+#20	NEW    cov: 251 ft: 379 corp: 13/18b lim: 4 exec/s: 0 rss: 35Mb L: 2/3 MS: 2 ChangeBit-CrossOver-
+#21	NEW    cov: 251 ft: 380 corp: 14/20b lim: 4 exec/s: 0 rss: 35Mb L: 2/3 MS: 1 ChangeByte-
+#24	NEW    cov: 251 ft: 386 corp: 15/24b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 3 CopyPart-ShuffleBytes-ChangeBit-
+#27	NEW    cov: 251 ft: 393 corp: 16/28b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 3 CopyPart-CrossOver-ChangeBinInt-
+#32	NEW    cov: 251 ft: 396 corp: 17/30b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 5 InsertByte-ChangeBit-ChangeByte-EraseBytes-InsertByte-
+#33	NEW    cov: 252 ft: 399 corp: 18/34b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 1 CMP- DE: "\377\377\377\377"-
+#34	NEW    cov: 252 ft: 400 corp: 19/36b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 1 ChangeBit-
+#38	NEW    cov: 253 ft: 402 corp: 20/39b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 4 ChangeByte-ShuffleBytes-InsertByte-InsertByte-
+#41	NEW    cov: 253 ft: 406 corp: 21/42b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 3 ChangeBit-CopyPart-CrossOver-
+#43	NEW    cov: 253 ft: 408 corp: 22/43b lim: 4 exec/s: 0 rss: 35Mb L: 1/4 MS: 2 ChangeByte-ChangeBit-
+#46	NEW    cov: 254 ft: 411 corp: 23/46b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 3 CopyPart-EraseBytes-InsertByte-
+#49	NEW    cov: 254 ft: 413 corp: 24/48b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 3 CopyPart-ShuffleBytes-CrossOver-
+#50	NEW    cov: 254 ft: 414 corp: 25/49b lim: 4 exec/s: 0 rss: 35Mb L: 1/4 MS: 1 ChangeBinInt-
+#51	NEW    cov: 254 ft: 416 corp: 26/50b lim: 4 exec/s: 0 rss: 35Mb L: 1/4 MS: 1 EraseBytes-
+#55	NEW    cov: 254 ft: 417 corp: 27/53b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 4 CopyPart-ChangeByte-CopyPart-ChangeBit-
+#56	NEW    cov: 254 ft: 420 corp: 28/57b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 1 CopyPart-
+#60	NEW    cov: 255 ft: 422 corp: 29/59b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 4 ShuffleBytes-CrossOver-EraseBytes-InsertByte-
+#61	NEW    cov: 255 ft: 423 corp: 30/61b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 1 CrossOver-
+#68	NEW    cov: 255 ft: 425 corp: 31/65b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 2 ShuffleBytes-ChangeBit-
+#75	NEW    cov: 255 ft: 426 corp: 32/69b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 2 CrossOver-ChangeBit-
+#76	NEW    cov: 255 ft: 429 corp: 33/71b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 1 ChangeByte-
+#86	NEW    cov: 255 ft: 430 corp: 34/73b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 5 ShuffleBytes-ChangeBit-ChangeByte-ChangeByte-ChangeBit-
+#96	NEW    cov: 255 ft: 431 corp: 35/75b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 5 ShuffleBytes-ChangeBit-CrossOver-CopyPart-InsertByte-
+#97	NEW    cov: 255 ft: 432 corp: 36/79b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 1 ChangeBit-
+#100	DONE   cov: 255 ft: 432 corp: 36/79b lim: 4 exec/s: 0 rss: 35Mb
+###### Recommended dictionary. ######
+"\377\377\377\377" # Uses: 0
+###### End of recommended dictionary. ######
+Done 100 runs in 0 second(s)
+<end of output>
+Test time =   0.47 sec
+----------------------------------------------------------
+Test Passed.
+"sanitizer_test" end time: Nov 19 20:21 CET
+"sanitizer_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/5 Testing: fuzzer_test
+4/5 Test: fuzzer_test
+Command: "/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer" "-runs=10000" "-seed=418" "-max_len=256" "-timeout=5" "-print_final_stats=1" "-artifact_prefix=/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/fuzzer/artifacts/" "/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/fuzzer/corpus"
+Directory: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake
+"fuzzer_test" start time: Nov 19 20:21 CET
+Output:
+----------------------------------------------------------
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 418
+INFO: Loaded 1 modules   (900 inline 8-bit counters): 900 [0x10261c000, 0x10261c384), 
+INFO: Loaded 1 PC tables (900 PCs): 900 [0x10261c388,0x10261fbc8), 
+INFO:        0 files found in /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/fuzzer/corpus
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 218 ft: 218 corp: 1/1b exec/s: 0 rss: 34Mb
+#3	NEW    cov: 228 ft: 253 corp: 2/2b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 1 ChangeBit-
+#5	NEW    cov: 228 ft: 263 corp: 3/3b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 2 CopyPart-ChangeBit-
+#6	NEW    cov: 228 ft: 277 corp: 4/4b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 1 ChangeBit-
+#8	NEW    cov: 249 ft: 329 corp: 5/5b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 2 ChangeBit-ChangeBit-
+#10	NEW    cov: 249 ft: 330 corp: 6/6b lim: 4 exec/s: 0 rss: 34Mb L: 1/1 MS: 2 ShuffleBytes-ChangeByte-
+#11	NEW    cov: 249 ft: 333 corp: 7/8b lim: 4 exec/s: 0 rss: 34Mb L: 2/2 MS: 1 InsertByte-
+#12	NEW    cov: 249 ft: 334 corp: 8/9b lim: 4 exec/s: 0 rss: 34Mb L: 1/2 MS: 1 ChangeByte-
+#14	NEW    cov: 249 ft: 336 corp: 9/11b lim: 4 exec/s: 0 rss: 34Mb L: 2/2 MS: 2 CopyPart-InsertByte-
+#16	NEW    cov: 249 ft: 337 corp: 10/12b lim: 4 exec/s: 0 rss: 35Mb L: 1/2 MS: 2 CopyPart-EraseBytes-
+#17	NEW    cov: 250 ft: 363 corp: 11/13b lim: 4 exec/s: 0 rss: 35Mb L: 1/2 MS: 1 ChangeByte-
+#18	NEW    cov: 251 ft: 377 corp: 12/16b lim: 4 exec/s: 0 rss: 35Mb L: 3/3 MS: 1 InsertByte-
+#20	NEW    cov: 251 ft: 379 corp: 13/18b lim: 4 exec/s: 0 rss: 35Mb L: 2/3 MS: 2 ChangeBit-CrossOver-
+#21	NEW    cov: 251 ft: 380 corp: 14/20b lim: 4 exec/s: 0 rss: 35Mb L: 2/3 MS: 1 ChangeByte-
+#24	NEW    cov: 251 ft: 386 corp: 15/24b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 3 CopyPart-ShuffleBytes-ChangeBit-
+#27	NEW    cov: 251 ft: 393 corp: 16/28b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 3 CopyPart-CrossOver-ChangeBinInt-
+#32	NEW    cov: 251 ft: 396 corp: 17/30b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 5 InsertByte-ChangeBit-ChangeByte-EraseBytes-InsertByte-
+#33	NEW    cov: 252 ft: 399 corp: 18/34b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 1 CMP- DE: "\377\377\377\377"-
+#34	NEW    cov: 252 ft: 400 corp: 19/36b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 1 ChangeBit-
+#38	NEW    cov: 253 ft: 402 corp: 20/39b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 4 ChangeByte-ShuffleBytes-InsertByte-InsertByte-
+#41	NEW    cov: 253 ft: 406 corp: 21/42b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 3 ChangeBit-CopyPart-CrossOver-
+#43	NEW    cov: 253 ft: 408 corp: 22/43b lim: 4 exec/s: 0 rss: 35Mb L: 1/4 MS: 2 ChangeByte-ChangeBit-
+#46	NEW    cov: 254 ft: 411 corp: 23/46b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 3 CopyPart-EraseBytes-InsertByte-
+#49	NEW    cov: 254 ft: 413 corp: 24/48b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 3 CopyPart-ShuffleBytes-CrossOver-
+#50	NEW    cov: 254 ft: 414 corp: 25/49b lim: 4 exec/s: 0 rss: 35Mb L: 1/4 MS: 1 ChangeBinInt-
+#51	NEW    cov: 254 ft: 416 corp: 26/50b lim: 4 exec/s: 0 rss: 35Mb L: 1/4 MS: 1 EraseBytes-
+#55	NEW    cov: 254 ft: 417 corp: 27/53b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 4 CopyPart-ChangeByte-CopyPart-ChangeBit-
+#56	NEW    cov: 254 ft: 420 corp: 28/57b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 1 CopyPart-
+#60	NEW    cov: 255 ft: 422 corp: 29/59b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 4 ShuffleBytes-CrossOver-EraseBytes-InsertByte-
+#61	NEW    cov: 255 ft: 423 corp: 30/61b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 1 CrossOver-
+#68	NEW    cov: 255 ft: 425 corp: 31/65b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 2 ShuffleBytes-ChangeBit-
+#75	NEW    cov: 255 ft: 426 corp: 32/69b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 2 CrossOver-ChangeBit-
+#76	NEW    cov: 255 ft: 429 corp: 33/71b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 1 ChangeByte-
+#86	NEW    cov: 255 ft: 430 corp: 34/73b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 5 ShuffleBytes-ChangeBit-ChangeByte-ChangeByte-ChangeBit-
+#96	NEW    cov: 255 ft: 431 corp: 35/75b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 5 ShuffleBytes-ChangeBit-CrossOver-CopyPart-InsertByte-
+#97	NEW    cov: 255 ft: 432 corp: 36/79b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 1 ChangeBit-
+#109	NEW    cov: 255 ft: 433 corp: 37/83b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 2 ChangeByte-ChangeBinInt-
+#121	NEW    cov: 255 ft: 434 corp: 38/84b lim: 4 exec/s: 0 rss: 35Mb L: 1/4 MS: 2 ChangeByte-CrossOver-
+#123	NEW    cov: 255 ft: 436 corp: 39/86b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 2 ChangeBit-InsertByte-
+#124	NEW    cov: 255 ft: 442 corp: 40/90b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 1 ChangeASCIIInt-
+#149	NEW    cov: 255 ft: 446 corp: 41/92b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 5 ChangeByte-ShuffleBytes-CopyPart-CopyPart-ChangeBinInt-
+#160	NEW    cov: 255 ft: 447 corp: 42/96b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 1 CopyPart-
+#164	NEW    cov: 255 ft: 448 corp: 43/99b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 4 CMP-ShuffleBytes-ChangeByte-ChangeBit- DE: "\000\000"-
+#172	NEW    cov: 255 ft: 450 corp: 44/102b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 3 ShuffleBytes-ChangeByte-ChangeBit-
+#188	NEW    cov: 255 ft: 452 corp: 45/105b lim: 4 exec/s: 0 rss: 35Mb L: 3/4 MS: 1 CopyPart-
+#209	NEW    cov: 255 ft: 454 corp: 46/109b lim: 4 exec/s: 0 rss: 35Mb L: 4/4 MS: 1 ChangeBit-
+#211	NEW    cov: 255 ft: 455 corp: 47/111b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 2 EraseBytes-ChangeBinInt-
+#212	NEW    cov: 255 ft: 456 corp: 48/113b lim: 4 exec/s: 0 rss: 35Mb L: 2/4 MS: 1 ChangeBinInt-
+#232	NEW    cov: 255 ft: 457 corp: 49/117b lim: 4 exec/s: 0 rss: 36Mb L: 4/4 MS: 5 PersAutoDict-ChangeBinInt-ChangeByte-CrossOver-PersAutoDict- DE: "\000\000"-"\000\000"-
+#256	NEW    cov: 255 ft: 465 corp: 50/119b lim: 4 exec/s: 0 rss: 36Mb L: 2/4 MS: 4 ChangeBinInt-ChangeByte-CopyPart-ChangeBit-
+#316	NEW    cov: 255 ft: 466 corp: 51/122b lim: 4 exec/s: 0 rss: 36Mb L: 3/4 MS: 5 ChangeBit-ShuffleBytes-ShuffleBytes-ChangeBinInt-ChangeByte-
+#349	NEW    cov: 255 ft: 467 corp: 52/124b lim: 4 exec/s: 0 rss: 36Mb L: 2/4 MS: 3 CopyPart-ChangeByte-ChangeBit-
+#388	NEW    cov: 255 ft: 469 corp: 53/125b lim: 4 exec/s: 0 rss: 36Mb L: 1/4 MS: 4 ShuffleBytes-ChangeByte-CrossOver-ChangeByte-
+#457	NEW    cov: 255 ft: 470 corp: 54/128b lim: 4 exec/s: 0 rss: 36Mb L: 3/4 MS: 4 InsertByte-EraseBytes-CrossOver-CrossOver-
+#493	NEW    cov: 255 ft: 471 corp: 55/132b lim: 4 exec/s: 0 rss: 36Mb L: 4/4 MS: 1 ChangeByte-
+#511	REDUCE cov: 255 ft: 471 corp: 55/131b lim: 4 exec/s: 0 rss: 36Mb L: 2/4 MS: 3 CopyPart-EraseBytes-PersAutoDict- DE: "\000\000"-
+#555	NEW    cov: 255 ft: 472 corp: 56/135b lim: 4 exec/s: 0 rss: 36Mb L: 4/4 MS: 4 CrossOver-ShuffleBytes-ChangeBinInt-CMP- DE: "\377\377"-
+#622	NEW    cov: 255 ft: 473 corp: 57/137b lim: 4 exec/s: 0 rss: 36Mb L: 2/4 MS: 2 ChangeByte-CrossOver-
+#794	NEW    cov: 255 ft: 474 corp: 58/141b lim: 4 exec/s: 0 rss: 36Mb L: 4/4 MS: 2 ChangeBit-ChangeBinInt-
+#1038	NEW    cov: 255 ft: 475 corp: 59/146b lim: 6 exec/s: 0 rss: 37Mb L: 5/5 MS: 4 CMP-PersAutoDict-ChangeBit-CrossOver- DE: "\001\000"-"\000\000"-
+#1044	REDUCE cov: 255 ft: 475 corp: 59/145b lim: 6 exec/s: 0 rss: 37Mb L: 2/5 MS: 1 EraseBytes-
+#1189	NEW    cov: 255 ft: 476 corp: 60/149b lim: 6 exec/s: 0 rss: 37Mb L: 4/5 MS: 5 PersAutoDict-PersAutoDict-EraseBytes-CopyPart-ShuffleBytes- DE: "\377\377"-"\001\000"-
+#1293	NEW    cov: 255 ft: 477 corp: 61/155b lim: 6 exec/s: 0 rss: 37Mb L: 6/6 MS: 4 CrossOver-CrossOver-CMP-ChangeBit- DE: "\001\000"-
+#1331	NEW    cov: 255 ft: 478 corp: 62/160b lim: 6 exec/s: 0 rss: 37Mb L: 5/6 MS: 3 ChangeBit-InsertByte-InsertByte-
+#1395	NEW    cov: 255 ft: 479 corp: 63/165b lim: 6 exec/s: 0 rss: 37Mb L: 5/6 MS: 4 ChangeBit-ShuffleBytes-InsertByte-InsertByte-
+#1464	NEW    cov: 255 ft: 480 corp: 64/171b lim: 6 exec/s: 0 rss: 37Mb L: 6/6 MS: 4 ShuffleBytes-PersAutoDict-ChangeBinInt-InsertByte- DE: "\000\000"-
+#1527	NEW    cov: 255 ft: 481 corp: 65/175b lim: 6 exec/s: 0 rss: 37Mb L: 4/6 MS: 3 ChangeByte-ChangeByte-ChangeBinInt-
+#1583	NEW    cov: 255 ft: 482 corp: 66/180b lim: 6 exec/s: 0 rss: 37Mb L: 5/6 MS: 1 InsertRepeatedBytes-
+#1602	REDUCE cov: 255 ft: 482 corp: 66/179b lim: 6 exec/s: 0 rss: 37Mb L: 5/6 MS: 4 CrossOver-ChangeByte-EraseBytes-ChangeByte-
+#1748	REDUCE cov: 255 ft: 482 corp: 66/178b lim: 6 exec/s: 1748 rss: 38Mb L: 1/6 MS: 1 EraseBytes-
+#2000	NEW    cov: 255 ft: 483 corp: 67/186b lim: 8 exec/s: 2000 rss: 39Mb L: 8/8 MS: 2 InsertRepeatedBytes-ChangeBinInt-
+#2011	REDUCE cov: 255 ft: 484 corp: 68/191b lim: 8 exec/s: 2011 rss: 39Mb L: 5/8 MS: 1 ShuffleBytes-
+#2095	REDUCE cov: 255 ft: 484 corp: 68/189b lim: 8 exec/s: 2095 rss: 39Mb L: 2/8 MS: 4 PersAutoDict-CopyPart-ShuffleBytes-CrossOver- DE: "\377\377"-
+#2119	NEW    cov: 255 ft: 485 corp: 69/197b lim: 8 exec/s: 2119 rss: 39Mb L: 8/8 MS: 4 InsertRepeatedBytes-ChangeByte-ChangeByte-ChangeBinInt-
+#2137	NEW    cov: 255 ft: 486 corp: 70/200b lim: 8 exec/s: 2137 rss: 39Mb L: 3/8 MS: 3 CrossOver-ShuffleBytes-InsertByte-
+	NEW_FUNC[1/5]: 0x0001025a0b20 in rl_m_init__int8_t_8 (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x100000b20)
+	NEW_FUNC[2/5]: 0x0001025b7674 in rl_parse_from_vector__int64_t_VectorTint8_tT_int64_t_r_bool (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x100017674)
+#2447	NEW    cov: 264 ft: 495 corp: 71/209b lim: 11 exec/s: 2447 rss: 41Mb L: 9/9 MS: 5 CopyPart-ChangeBinInt-ChangeBit-ChangeByte-CrossOver-
+#2472	REDUCE cov: 264 ft: 495 corp: 71/208b lim: 11 exec/s: 2472 rss: 41Mb L: 3/9 MS: 5 EraseBytes-EraseBytes-CrossOver-CopyPart-PersAutoDict- DE: "\000\000"-
+	NEW_FUNC[1/1]: 0x0001025b9a2c in rl__from_vector_impl__GameConfigure_VectorTint8_tT_int64_t_r_bool (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x100019a2c)
+#2587	NEW    cov: 268 ft: 501 corp: 72/219b lim: 11 exec/s: 2587 rss: 41Mb L: 11/11 MS: 5 InsertByte-ChangeByte-CrossOver-ChangeBinInt-InsertRepeatedBytes-
+#2678	NEW    cov: 268 ft: 502 corp: 73/224b lim: 11 exec/s: 2678 rss: 41Mb L: 5/11 MS: 1 CMP- DE: "\000\000"-
+#2900	REDUCE cov: 268 ft: 502 corp: 73/223b lim: 11 exec/s: 2900 rss: 42Mb L: 1/11 MS: 2 ShuffleBytes-EraseBytes-
+#3126	NEW    cov: 268 ft: 503 corp: 74/232b lim: 11 exec/s: 3126 rss: 42Mb L: 9/11 MS: 1 CMP- DE: "\307\000\000\000\000\000\000\000"-
+#3228	REDUCE cov: 268 ft: 503 corp: 74/231b lim: 11 exec/s: 3228 rss: 42Mb L: 1/11 MS: 2 ChangeBit-EraseBytes-
+#3427	NEW    cov: 268 ft: 504 corp: 75/240b lim: 11 exec/s: 1713 rss: 42Mb L: 9/11 MS: 4 EraseBytes-InsertByte-CopyPart-PersAutoDict- DE: "\377\377\377\377"-
+#3788	NEW    cov: 268 ft: 505 corp: 76/245b lim: 14 exec/s: 1894 rss: 43Mb L: 5/11 MS: 1 CrossOver-
+#4094	NEW    cov: 268 ft: 512 corp: 77/262b lim: 17 exec/s: 2047 rss: 43Mb L: 17/17 MS: 1 InsertRepeatedBytes-
+#4096	pulse  cov: 268 ft: 512 corp: 77/262b lim: 17 exec/s: 2048 rss: 43Mb
+#4232	NEW    cov: 268 ft: 514 corp: 78/279b lim: 17 exec/s: 2116 rss: 43Mb L: 17/17 MS: 3 InsertRepeatedBytes-InsertRepeatedBytes-ChangeBinInt-
+#4246	NEW    cov: 268 ft: 515 corp: 79/286b lim: 17 exec/s: 2123 rss: 43Mb L: 7/17 MS: 4 EraseBytes-InsertRepeatedBytes-EraseBytes-InsertByte-
+#4332	REDUCE cov: 268 ft: 515 corp: 79/285b lim: 17 exec/s: 2166 rss: 43Mb L: 1/17 MS: 1 EraseBytes-
+	NEW_FUNC[1/2]: 0x0001025b82c4 in rl_parse_from_vector__bool_VectorTint8_tT_int64_t_r_bool (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x1000182c4)
+	NEW_FUNC[2/2]: 0x0001025b9fe4 in rl__from_vector_impl__bool_VectorTint8_tT_int64_t_r_bool (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x100019fe4)
+#4502	NEW    cov: 272 ft: 519 corp: 80/301b lim: 17 exec/s: 2251 rss: 43Mb L: 16/17 MS: 5 InsertRepeatedBytes-ShuffleBytes-ChangeBinInt-CopyPart-ShuffleBytes-
+#4568	NEW    cov: 272 ft: 520 corp: 81/318b lim: 17 exec/s: 2284 rss: 43Mb L: 17/17 MS: 1 PersAutoDict- DE: "\307\000\000\000\000\000\000\000"-
+#4605	REDUCE cov: 272 ft: 520 corp: 81/316b lim: 17 exec/s: 2302 rss: 43Mb L: 2/17 MS: 2 ChangeByte-EraseBytes-
+	NEW_FUNC[1/1]: 0x0001025a0af4 in rl_m_init__int8_t_1 (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x100000af4)
+#4901	NEW    cov: 275 ft: 525 corp: 82/333b lim: 17 exec/s: 2450 rss: 44Mb L: 17/17 MS: 1 InsertRepeatedBytes-
+#4925	NEW    cov: 275 ft: 526 corp: 83/339b lim: 17 exec/s: 2462 rss: 44Mb L: 6/17 MS: 4 CrossOver-CMP-EraseBytes-ChangeBit- DE: "\001\000\000\000\000\000\000\000"-
+	NEW_FUNC[1/5]: 0x0001025a14f4 in rl_m_init__GameDeal (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x1000014f4)
+	NEW_FUNC[2/5]: 0x0001025a3728 in rl_from_int__Card_int64_t (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x100003728)
+#5171	NEW    cov: 283 ft: 534 corp: 84/349b lim: 17 exec/s: 1723 rss: 44Mb L: 10/17 MS: 1 PersAutoDict- DE: "\001\000\000\000\000\000\000\000"-
+	NEW_FUNC[1/10]: 0x0001025a28a8 in rl_m_assign__AnyGameAction_GameDeal (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x1000028a8)
+	NEW_FUNC[2/10]: 0x0001025a2dac in rl_m_assign__AnyGameAction_AnyGameAction (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x100002dac)
+#5365	NEW    cov: 310 ft: 562 corp: 85/365b lim: 17 exec/s: 1788 rss: 44Mb L: 16/17 MS: 4 InsertRepeatedBytes-CrossOver-ChangeBit-PersAutoDict- DE: "\001\000\000\000\000\000\000\000"-
+#5419	REDUCE cov: 310 ft: 562 corp: 85/364b lim: 17 exec/s: 1806 rss: 44Mb L: 3/17 MS: 4 PersAutoDict-EraseBytes-ShuffleBytes-CopyPart- DE: "\000\000"-
+#5500	NEW    cov: 310 ft: 563 corp: 86/375b lim: 17 exec/s: 1833 rss: 45Mb L: 11/17 MS: 1 PersAutoDict- DE: "\307\000\000\000\000\000\000\000"-
+#5669	NEW    cov: 310 ft: 564 corp: 87/386b lim: 17 exec/s: 1889 rss: 45Mb L: 11/17 MS: 4 ChangeBinInt-ChangeBit-ShuffleBytes-InsertByte-
+#6190	NEW    cov: 311 ft: 567 corp: 88/406b lim: 21 exec/s: 2063 rss: 45Mb L: 20/20 MS: 1 InsertRepeatedBytes-
+#6602	NEW    cov: 311 ft: 573 corp: 89/431b lim: 25 exec/s: 2200 rss: 46Mb L: 25/25 MS: 2 InsertRepeatedBytes-ChangeByte-
+#6876	REDUCE cov: 311 ft: 575 corp: 90/456b lim: 25 exec/s: 1719 rss: 46Mb L: 25/25 MS: 4 ChangeByte-ChangeByte-PersAutoDict-InsertRepeatedBytes- DE: "\001\000"-
+#6931	NEW    cov: 311 ft: 576 corp: 91/476b lim: 25 exec/s: 1732 rss: 46Mb L: 20/25 MS: 5 ChangeByte-EraseBytes-InsertRepeatedBytes-PersAutoDict-CrossOver- DE: "\377\377"-
+#7385	NEW    cov: 311 ft: 577 corp: 92/494b lim: 29 exec/s: 1846 rss: 47Mb L: 18/25 MS: 4 CopyPart-ChangeBit-ChangeByte-InsertByte-
+	NEW_FUNC[1/2]: 0x0001025a1404 in rl_m_init__GameChoose (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x100001404)
+	NEW_FUNC[2/2]: 0x0001025b9d70 in rl__from_vector_impl__GameChoose_VectorTint8_tT_int64_t_r_bool (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x100019d70)
+#7486	NEW    cov: 315 ft: 581 corp: 93/503b lim: 29 exec/s: 1871 rss: 47Mb L: 9/25 MS: 1 CMP- DE: "\002\000\000\000\000\000\000\000"-
+#7557	NEW    cov: 315 ft: 582 corp: 94/521b lim: 29 exec/s: 1889 rss: 47Mb L: 18/25 MS: 1 ShuffleBytes-
+#7607	NEW    cov: 316 ft: 583 corp: 95/539b lim: 29 exec/s: 1901 rss: 47Mb L: 18/25 MS: 5 ShuffleBytes-PersAutoDict-CopyPart-ShuffleBytes-CMP- DE: "\002\000\000\000\000\000\000\000"-"\000\000\000\000\000\000\000\000"-
+#8055	NEW    cov: 316 ft: 590 corp: 96/572b lim: 33 exec/s: 2013 rss: 47Mb L: 33/33 MS: 3 ChangeBit-InsertByte-InsertRepeatedBytes-
+	NEW_FUNC[1/3]: 0x0001025a261c in rl_m_assign__AnyGameAction_GameConfigure (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x10000261c)
+	NEW_FUNC[2/3]: 0x0001025a327c in rl_m_assign__GameConfigure_GameConfigure (/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/result/game_fuzzer:arm64+0x10000327c)
+#8129	NEW    cov: 327 ft: 602 corp: 97/598b lim: 33 exec/s: 2032 rss: 47Mb L: 26/33 MS: 4 InsertRepeatedBytes-CrossOver-PersAutoDict-InsertRepeatedBytes- DE: "\001\000"-
+#8192	pulse  cov: 327 ft: 602 corp: 97/598b lim: 33 exec/s: 2048 rss: 47Mb
+#8622	REDUCE cov: 327 ft: 602 corp: 97/596b lim: 33 exec/s: 1724 rss: 48Mb L: 2/33 MS: 3 CrossOver-ShuffleBytes-EraseBytes-
+#8922	REDUCE cov: 327 ft: 602 corp: 97/595b lim: 33 exec/s: 1784 rss: 48Mb L: 1/33 MS: 5 ChangeBinInt-ChangeByte-ShuffleBytes-EraseBytes-ChangeBinInt-
+#9913	NEW    cov: 327 ft: 603 corp: 98/613b lim: 38 exec/s: 1982 rss: 49Mb L: 18/33 MS: 1 ChangeBinInt-
+#9981	NEW    cov: 328 ft: 604 corp: 99/644b lim: 38 exec/s: 1996 rss: 49Mb L: 31/33 MS: 3 CopyPart-CopyPart-ChangeBit-
+#10000	DONE   cov: 328 ft: 604 corp: 99/644b lim: 38 exec/s: 2000 rss: 49Mb
+###### Recommended dictionary. ######
+"\377\377\377\377" # Uses: 114
+"\000\000" # Uses: 187
+"\377\377" # Uses: 172
+"\001\000" # Uses: 148
+"\307\000\000\000\000\000\000\000" # Uses: 61
+"\001\000\000\000\000\000\000\000" # Uses: 60
+"\002\000\000\000\000\000\000\000" # Uses: 24
+"\000\000\000\000\000\000\000\000" # Uses: 16
+###### End of recommended dictionary. ######
+Done 10000 runs in 5 second(s)
+stat::number_of_executed_units: 10000
+stat::average_exec_per_sec:     2000
+stat::new_units_added:          111
+stat::slowest_unit_time_sec:    0
+stat::peak_rss_mb:              49
+<end of output>
+Test time =   5.94 sec
+----------------------------------------------------------
+Test Passed.
+"fuzzer_test" end time: Nov 19 20:21 CET
+"fuzzer_test" time elapsed: 00:00:05
+----------------------------------------------------------
+
+5/5 Testing: trace_test
+5/5 Test: trace_test
+Command: "/opt/homebrew/Caskroom/miniforge/base/envs/rulebook/bin/cmake" "-DMODE=trace" "-DCONDA_BIN=/opt/homebrew/Caskroom/miniforge/base/envs/rulebook/bin" "-DRLC=/opt/homebrew/Caskroom/miniforge/base/envs/rulebook/bin/rlc" "-DSOURCE=/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/game.rl" "-DSOURCE_DIR=/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1" "-DTRACE_DIR=/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/traces" "-DLOG_DIR=/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/test/traces" "-P" "/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/cmake/rulebook_game.cmake"
+Directory: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake
+"trace_test" start time: Nov 19 20:21 CET
+Output:
+----------------------------------------------------------
+-- game1.trace.txt passed. Log: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/test/traces/game1.log
+-- game2.trace.txt passed. Log: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/test/traces/game2.log
+-- game3.trace.txt passed. Log: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/test/traces/game3.log
+-- game4.trace.txt passed. Log: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/test/traces/game4.log
+-- game5.trace.txt passed. Log: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/temp/test/traces/game5.log
+<end of output>
+Test time =   7.24 sec
+----------------------------------------------------------
+Test Passed.
+"trace_test" end time: Nov 19 20:21 CET
+"trace_test" time elapsed: 00:00:07
+----------------------------------------------------------
+
+End testing: Nov 19 20:21 CET

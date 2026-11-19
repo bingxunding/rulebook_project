@@ -1,0 +1,193 @@
+Trace: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/traces/game3.trace.txt
+Expected state file: /Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/traces/game3.expected.txt
+rlc-action result: 0
+
+stdout:
+1 configure {players: 4, alternate: false, dummy: false, controller: 0} 
+2 deal {card: maki_two} 
+3 deal {card: salmon_nigiri} 
+4 deal {card: salmon_nigiri} 
+5 deal {card: maki_one} 
+6 deal {card: maki_two} 
+7 deal {card: maki_three} 
+8 deal {card: pudding} 
+9 deal {card: maki_two} 
+10 deal {card: salmon_nigiri} 
+11 deal {card: egg_nigiri} 
+12 deal {card: dumpling} 
+13 deal {card: maki_two} 
+14 deal {card: pudding} 
+15 deal {card: egg_nigiri} 
+16 deal {card: sashimi} 
+17 deal {card: maki_three} 
+18 deal {card: maki_three} 
+19 deal {card: maki_three} 
+20 deal {card: maki_two} 
+21 deal {card: sashimi} 
+22 deal {card: squid_nigiri} 
+23 deal {card: squid_nigiri} 
+24 deal {card: sashimi} 
+25 deal {card: maki_one} 
+26 deal {card: sashimi} 
+27 deal {card: maki_one} 
+28 deal {card: tempura} 
+29 deal {card: dumpling} 
+30 deal {card: tempura} 
+31 deal {card: wasabi} 
+32 deal {card: pudding} 
+33 deal {card: egg_nigiri} 
+34 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+35 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+36 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+37 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+38 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+39 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+40 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+41 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+42 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+43 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+44 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+45 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+46 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+47 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+48 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+49 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+50 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+51 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+52 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+53 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+54 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+55 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+56 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+57 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+58 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+59 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+60 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+61 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+62 deal {card: sashimi} 
+63 deal {card: squid_nigiri} 
+64 deal {card: dumpling} 
+65 deal {card: pudding} 
+66 deal {card: maki_two} 
+67 deal {card: wasabi} 
+68 deal {card: pudding} 
+69 deal {card: tempura} 
+70 deal {card: salmon_nigiri} 
+71 deal {card: tempura} 
+72 deal {card: salmon_nigiri} 
+73 deal {card: maki_three} 
+74 deal {card: pudding} 
+75 deal {card: salmon_nigiri} 
+76 deal {card: sashimi} 
+77 deal {card: wasabi} 
+78 deal {card: tempura} 
+79 deal {card: pudding} 
+80 deal {card: maki_one} 
+81 deal {card: wasabi} 
+82 deal {card: dumpling} 
+83 deal {card: maki_two} 
+84 deal {card: sashimi} 
+85 deal {card: squid_nigiri} 
+86 deal {card: sashimi} 
+87 deal {card: maki_three} 
+88 deal {card: salmon_nigiri} 
+89 deal {card: tempura} 
+90 deal {card: salmon_nigiri} 
+91 deal {card: dumpling} 
+92 deal {card: maki_three} 
+93 deal {card: dumpling} 
+94 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+95 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+96 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+97 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+98 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+99 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+100 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+101 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+102 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+103 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+104 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+105 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+106 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+107 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+108 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+109 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+110 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+111 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+112 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+113 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+114 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+115 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+116 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+117 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+118 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+119 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+120 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+121 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+122 deal {card: egg_nigiri} 
+123 deal {card: maki_two} 
+124 deal {card: sashimi} 
+125 deal {card: dumpling} 
+126 deal {card: wasabi} 
+127 deal {card: dumpling} 
+128 deal {card: tempura} 
+129 deal {card: tempura} 
+130 deal {card: sashimi} 
+131 deal {card: chopsticks} 
+132 deal {card: tempura} 
+133 deal {card: tempura} 
+134 deal {card: maki_two} 
+135 deal {card: tempura} 
+136 deal {card: maki_one} 
+137 deal {card: maki_two} 
+138 deal {card: pudding} 
+139 deal {card: tempura} 
+140 deal {card: pudding} 
+141 deal {card: tempura} 
+142 deal {card: chopsticks} 
+143 deal {card: salmon_nigiri} 
+144 deal {card: maki_two} 
+145 deal {card: pudding} 
+146 deal {card: dumpling} 
+147 deal {card: squid_nigiri} 
+148 deal {card: dumpling} 
+149 deal {card: sashimi} 
+150 deal {card: salmon_nigiri} 
+151 deal {card: chopsticks} 
+152 deal {card: chopsticks} 
+153 deal {card: maki_two} 
+154 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+155 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+156 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+157 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+158 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+159 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+160 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+161 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+162 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+163 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+164 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+165 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+166 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+167 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+168 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+169 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+170 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+171 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+172 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+173 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+174 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+175 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+176 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+177 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+178 choose {player: 0, first: 0, second: -1, dummy_index: -1} 
+179 choose {player: 1, first: 0, second: -1, dummy_index: -1} 
+180 choose {player: 2, first: 0, second: -1, dummy_index: -1} 
+181 choose {player: 3, first: 0, second: -1, dummy_index: -1} 
+{resume_index: -1, s: {players: 4, participants: 4, dummy_mode: false, alternate: false, first_controller: 0, controller: 0, round: 4, turn: 7, hand_size: 8, remaining: {counts: [1, 3, 4, 1, 0, 1, 0, 0, 1, 0, 1, 0], total: 12}, seats: [{hand: {value: {cards: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1], size: 0}, owner: 0}, pending: {value: {first: -1, second: -1, dummy_card: -1}, owner: 0}, table: [1, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 1], unused_wasabi: 1, nigiri_points: 4, puddings: 1, score: 14, winner: false, committed: false}, {hand: {value: {cards: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1], size: 0}, owner: 1}, pending: {value: {first: -1, second: -1, dummy_card: -1}, owner: 1}, table: [1, 1, 2, 0, 2, 0, 0, 0, 0, 1, 0, 1], unused_wasabi: 0, nigiri_points: 0, puddings: 4, score: 35, winner: true, committed: false}, {hand: {value: {cards: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1], size: 0}, owner: 2}, pending: {value: {first: -1, second: -1, dummy_card: -1}, owner: 2}, table: [2, 2, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2], unused_wasabi: 0, nigiri_points: 0, puddings: 3, score: 27, winner: false, committed: false}, {hand: {value: {cards: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1], size: 0}, owner: 3}, pending: {value: {first: -1, second: -1, dummy_card: -1}, owner: 3}, table: [3, 0, 2, 1, 0, 0, 2, 0, 0, 0, 0, 0], unused_wasabi: 0, nigiri_points: 4, puddings: 2, score: 23, winner: false, committed: false}, {hand: {value: {cards: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1], size: 0}, owner: 4}, pending: {value: {first: -1, second: -1, dummy_card: -1}, owner: 4}, table: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], unused_wasabi: 0, nigiri_points: 0, puddings: 0, score: 0, winner: false, committed: false}], dummy_pile: {cards: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1], size: 0}, discarded: [6, 8, 6, 4, 7, 7, 8, 4, 3, 0, 4, 0], deal_seat: 4, deal_count: 0, submitted: 4}} 
+
+
+stderr:
+
+
+PASS
