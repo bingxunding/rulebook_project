@@ -1,0 +1,168 @@
+# Complete two-human dummy-variant game from an independent PDF oracle.
+# Dummy seat 2 scores, can win, and keeps its original pile in place.
+setup {humans: 2, alternate: false, dummy: true, first_controller: 0}
+# Round 1; controller continues alternating across rounds.
+deal {card: Maki1}
+deal {card: Dumpling}
+deal {card: Maki2}
+deal {card: SalmonNigiri}
+deal {card: Sashimi}
+deal {card: Dumpling}
+deal {card: Pudding}
+deal {card: Tempura}
+deal {card: Tempura}
+deal {card: Maki2}
+deal {card: SalmonNigiri}
+deal {card: Dumpling}
+deal {card: Dumpling}
+deal {card: Chopsticks}
+deal {card: Maki3}
+deal {card: Maki2}
+deal {card: Chopsticks}
+deal {card: Chopsticks}
+deal {card: Maki3}
+deal {card: Sashimi}
+deal {card: Sashimi}
+deal {card: Wasabi}
+deal {card: SquidNigiri}
+deal {card: Wasabi}
+deal {card: Sashimi}
+deal {card: Dumpling}
+deal {card: Pudding}
+# Simultaneous selection 1; human 0 controls dummy.
+pick {player: 0, index: 0, gift: 9}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 2; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: 8}
+# Simultaneous selection 3; human 0 controls dummy.
+pick {player: 0, index: 1, gift: 0}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 4; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: 6}
+# Simultaneous selection 5; human 0 controls dummy.
+pick {player: 0, index: 1, gift: 0}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 6; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+chopsticks {player: 1, first: 0, second: 1, gift: 4}
+# Simultaneous selection 7; human 0 controls dummy.
+pick {player: 0, index: 1, gift: 0}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 8; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: 2}
+# Simultaneous selection 9; human 0 controls dummy.
+pick {player: 0, index: 1, gift: 0}
+pick {player: 1, index: 0, gift: -1}
+# Round 2; controller continues alternating across rounds.
+deal {card: Maki2}
+deal {card: Tempura}
+deal {card: Tempura}
+deal {card: Tempura}
+deal {card: SalmonNigiri}
+deal {card: Wasabi}
+deal {card: Maki2}
+deal {card: Sashimi}
+deal {card: Sashimi}
+deal {card: Maki3}
+deal {card: Pudding}
+deal {card: Tempura}
+deal {card: SquidNigiri}
+deal {card: Pudding}
+deal {card: Maki2}
+deal {card: Tempura}
+deal {card: Tempura}
+deal {card: Dumpling}
+deal {card: Maki1}
+deal {card: Maki1}
+deal {card: SalmonNigiri}
+deal {card: SalmonNigiri}
+deal {card: Tempura}
+deal {card: Dumpling}
+deal {card: Tempura}
+deal {card: Pudding}
+deal {card: Dumpling}
+# Simultaneous selection 1; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: 9}
+# Simultaneous selection 2; human 0 controls dummy.
+pick {player: 0, index: 0, gift: 8}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 3; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 1, gift: 0}
+# Simultaneous selection 4; human 0 controls dummy.
+pick {player: 0, index: 0, gift: 6}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 5; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 1, gift: 0}
+# Simultaneous selection 6; human 0 controls dummy.
+pick {player: 0, index: 0, gift: 4}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 7; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 1, gift: 0}
+# Simultaneous selection 8; human 0 controls dummy.
+pick {player: 0, index: 0, gift: 2}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 9; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 1, gift: 0}
+# Round 3; controller continues alternating across rounds.
+deal {card: Maki3}
+deal {card: Pudding}
+deal {card: SalmonNigiri}
+deal {card: Tempura}
+deal {card: Wasabi}
+deal {card: Maki3}
+deal {card: SalmonNigiri}
+deal {card: EggNigiri}
+deal {card: Sashimi}
+deal {card: Maki1}
+deal {card: SquidNigiri}
+deal {card: Tempura}
+deal {card: Sashimi}
+deal {card: Dumpling}
+deal {card: Maki2}
+deal {card: EggNigiri}
+deal {card: Dumpling}
+deal {card: SquidNigiri}
+deal {card: Maki2}
+deal {card: EggNigiri}
+deal {card: Pudding}
+deal {card: Pudding}
+deal {card: Maki3}
+deal {card: Pudding}
+deal {card: Pudding}
+deal {card: Chopsticks}
+deal {card: Maki2}
+# Simultaneous selection 1; human 0 controls dummy.
+pick {player: 0, index: 0, gift: 9}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 2; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: 8}
+# Simultaneous selection 3; human 0 controls dummy.
+pick {player: 0, index: 1, gift: 0}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 4; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: 6}
+# Simultaneous selection 5; human 0 controls dummy.
+pick {player: 0, index: 1, gift: 0}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 6; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: 4}
+# Simultaneous selection 7; human 0 controls dummy.
+pick {player: 0, index: 1, gift: 0}
+pick {player: 1, index: 0, gift: -1}
+# Simultaneous selection 8; human 1 controls dummy.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: 2}
+# Simultaneous selection 9; human 0 controls dummy.
+pick {player: 0, index: 1, gift: 0}
+pick {player: 1, index: 0, gift: -1}
