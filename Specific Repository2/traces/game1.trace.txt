@@ -1,0 +1,19 @@
+# Base game: one successful play followed by third-fuse defeat; retain score one.
+configure {players: 2, first_player: 0, variant: 0, extended: false}
+deal_card {color: 0, rank: 1}
+deal_card {color: 1, rank: 1}
+deal_card {color: 0, rank: 2}
+deal_card {color: 1, rank: 2}
+deal_card {color: 0, rank: 3}
+deal_card {color: 1, rank: 3}
+deal_card {color: 0, rank: 4}
+deal_card {color: 1, rank: 4}
+deal_card {color: 0, rank: 5}
+deal_card {color: 1, rank: 5}
+play_card {actor: 0, slot: 0}
+draw_card {color: 2, rank: 2}
+play_card {actor: 1, slot: 1}
+draw_card {color: 2, rank: 3}
+play_card {actor: 0, slot: 1}
+draw_card {color: 2, rank: 4}
+play_card {actor: 1, slot: 1}

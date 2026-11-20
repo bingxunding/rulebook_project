@@ -1,0 +1,134 @@
+# Two players, starting at seat one: final draw grants exactly two further turns.
+configure {players: 2, first_player: 1, variant: 0, extended: false}
+deal_card {color: 0, rank: 1}
+deal_card {color: 0, rank: 1}
+deal_card {color: 0, rank: 1}
+deal_card {color: 0, rank: 2}
+deal_card {color: 0, rank: 2}
+deal_card {color: 0, rank: 3}
+deal_card {color: 0, rank: 3}
+deal_card {color: 0, rank: 4}
+deal_card {color: 0, rank: 4}
+deal_card {color: 0, rank: 5}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 2}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 3}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 2}
+hint_rank {actor: 1, target: 0, rank: 4}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 2}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 3}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 3}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 4}
+hint_rank {actor: 1, target: 0, rank: 2}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 4}
+hint_rank {actor: 1, target: 0, rank: 2}
+discard {actor: 0, slot: 0}
+draw_card {color: 1, rank: 5}
+hint_rank {actor: 1, target: 0, rank: 3}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 3}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 4}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 4}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 2}
+hint_rank {actor: 1, target: 0, rank: 5}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 2}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 3}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 3}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 4}
+hint_rank {actor: 1, target: 0, rank: 2}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 4}
+hint_rank {actor: 1, target: 0, rank: 2}
+discard {actor: 0, slot: 0}
+draw_card {color: 2, rank: 5}
+hint_rank {actor: 1, target: 0, rank: 3}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 3}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 4}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 4}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 2}
+hint_rank {actor: 1, target: 0, rank: 5}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 2}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 3}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 3}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 4}
+hint_rank {actor: 1, target: 0, rank: 2}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 4}
+hint_rank {actor: 1, target: 0, rank: 2}
+discard {actor: 0, slot: 0}
+draw_card {color: 3, rank: 5}
+hint_rank {actor: 1, target: 0, rank: 3}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 3}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 4}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 1}
+hint_rank {actor: 1, target: 0, rank: 4}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 2}
+hint_rank {actor: 1, target: 0, rank: 5}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 2}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 3}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 3}
+hint_rank {actor: 1, target: 0, rank: 1}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 4}
+hint_rank {actor: 1, target: 0, rank: 2}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 4}
+hint_rank {actor: 1, target: 0, rank: 2}
+discard {actor: 0, slot: 0}
+draw_card {color: 4, rank: 5}
+hint_rank {actor: 1, target: 0, rank: 3}
+hint_rank {actor: 0, target: 1, rank: 1}

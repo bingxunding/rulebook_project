@@ -1,0 +1,20 @@
+# Variant 1: clue all multicolor cards, rank clue, free reorder, then third-fuse defeat.
+configure {players: 2, first_player: 0, variant: 1, extended: false}
+deal_card {color: 0, rank: 1}
+deal_card {color: 5, rank: 1}
+deal_card {color: 0, rank: 2}
+deal_card {color: 5, rank: 2}
+deal_card {color: 0, rank: 3}
+deal_card {color: 5, rank: 3}
+deal_card {color: 0, rank: 4}
+deal_card {color: 5, rank: 4}
+deal_card {color: 0, rank: 5}
+deal_card {color: 5, rank: 5}
+hint_color {actor: 0, target: 1, color: 5}
+hint_rank {actor: 1, target: 0, rank: 2}
+reorder {player: 0, first: 0, second: 2}
+play_card {actor: 0, slot: 0}
+draw_card {color: 2, rank: 1}
+play_card {actor: 1, slot: 1}
+draw_card {color: 2, rank: 2}
+play_card {actor: 0, slot: 0}

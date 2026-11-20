@@ -1,0 +1,116 @@
+# Variant 4: continue beyond the exhausted deck and a full extra round, then lose an indispensable card.
+configure {players: 2, first_player: 0, variant: 0, extended: true}
+deal_card {color: 0, rank: 1}
+deal_card {color: 1, rank: 1}
+deal_card {color: 0, rank: 2}
+deal_card {color: 1, rank: 2}
+deal_card {color: 0, rank: 3}
+deal_card {color: 1, rank: 3}
+deal_card {color: 0, rank: 4}
+deal_card {color: 1, rank: 4}
+deal_card {color: 0, rank: 5}
+deal_card {color: 1, rank: 5}
+play_card {actor: 0, slot: 0}
+draw_card {color: 2, rank: 1}
+play_card {actor: 1, slot: 0}
+draw_card {color: 3, rank: 1}
+play_card {actor: 0, slot: 0}
+draw_card {color: 4, rank: 1}
+play_card {actor: 1, slot: 0}
+draw_card {color: 0, rank: 1}
+play_card {actor: 0, slot: 0}
+draw_card {color: 0, rank: 1}
+play_card {actor: 1, slot: 0}
+draw_card {color: 0, rank: 2}
+play_card {actor: 0, slot: 0}
+draw_card {color: 0, rank: 3}
+play_card {actor: 1, slot: 0}
+draw_card {color: 0, rank: 4}
+play_card {actor: 0, slot: 1}
+draw_card {color: 2, rank: 2}
+play_card {actor: 1, slot: 1}
+draw_card {color: 3, rank: 2}
+play_card {actor: 0, slot: 1}
+draw_card {color: 4, rank: 2}
+play_card {actor: 1, slot: 4}
+draw_card {color: 3, rank: 3}
+play_card {actor: 0, slot: 3}
+draw_card {color: 2, rank: 3}
+play_card {actor: 1, slot: 4}
+draw_card {color: 3, rank: 4}
+play_card {actor: 0, slot: 3}
+draw_card {color: 4, rank: 3}
+play_card {actor: 1, slot: 4}
+draw_card {color: 1, rank: 1}
+play_card {actor: 0, slot: 3}
+draw_card {color: 2, rank: 4}
+hint_rank {actor: 1, target: 0, rank: 5}
+play_card {actor: 0, slot: 3}
+draw_card {color: 4, rank: 4}
+discard {actor: 1, slot: 1}
+draw_card {color: 1, rank: 1}
+play_card {actor: 0, slot: 3}
+draw_card {color: 1, rank: 2}
+hint_rank {actor: 1, target: 0, rank: 5}
+play_card {actor: 0, slot: 3}
+draw_card {color: 1, rank: 3}
+discard {actor: 1, slot: 1}
+draw_card {color: 1, rank: 4}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 2, rank: 1}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 2, rank: 1}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 2, rank: 2}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 2, rank: 3}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 2, rank: 4}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 3, rank: 1}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 3, rank: 1}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 3, rank: 2}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 3, rank: 3}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 3, rank: 4}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 4, rank: 1}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 4, rank: 1}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 4, rank: 2}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 4, rank: 3}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 4, rank: 4}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 2, rank: 5}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 3, rank: 5}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 1}
+draw_card {color: 4, rank: 5}
+hint_rank {actor: 0, target: 1, rank: 5}
+hint_rank {actor: 1, target: 0, rank: 5}
+hint_rank {actor: 0, target: 1, rank: 5}
+discard {actor: 1, slot: 0}
