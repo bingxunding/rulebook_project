@@ -1,0 +1,219 @@
+# Complete three-round Sushi Go game, independently evaluated from the PDF.
+# The first card of each initial hand is maki and is selected on turn one.
+setup {humans: 5, alternate: true, dummy: false, first_controller: 0}
+# Round 1; contiguous deals to each player.
+deal {card: Maki1}
+deal {card: Wasabi}
+deal {card: Sashimi}
+deal {card: Tempura}
+deal {card: Dumpling}
+deal {card: Pudding}
+deal {card: Dumpling}
+deal {card: Maki2}
+deal {card: EggNigiri}
+deal {card: Wasabi}
+deal {card: SalmonNigiri}
+deal {card: SalmonNigiri}
+deal {card: Maki1}
+deal {card: Maki2}
+deal {card: Maki3}
+deal {card: Maki3}
+deal {card: Sashimi}
+deal {card: Chopsticks}
+deal {card: Dumpling}
+deal {card: Sashimi}
+deal {card: Wasabi}
+deal {card: Maki1}
+deal {card: Maki2}
+deal {card: Maki2}
+deal {card: Pudding}
+deal {card: EggNigiri}
+deal {card: Tempura}
+deal {card: SquidNigiri}
+deal {card: Maki2}
+deal {card: Chopsticks}
+deal {card: Pudding}
+deal {card: Wasabi}
+deal {card: Sashimi}
+deal {card: EggNigiri}
+deal {card: SalmonNigiri}
+# Simultaneous selection 1.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 2.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 3.
+chopsticks {player: 0, first: 0, second: 1, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 4.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 5.
+chopsticks {player: 0, first: 0, second: 1, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 6.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Round 2; contiguous deals to each player.
+deal {card: Maki2}
+deal {card: SquidNigiri}
+deal {card: SalmonNigiri}
+deal {card: Sashimi}
+deal {card: Pudding}
+deal {card: Sashimi}
+deal {card: Sashimi}
+deal {card: Maki3}
+deal {card: Tempura}
+deal {card: SalmonNigiri}
+deal {card: Maki1}
+deal {card: Tempura}
+deal {card: SalmonNigiri}
+deal {card: Tempura}
+deal {card: Maki1}
+deal {card: Dumpling}
+deal {card: EggNigiri}
+deal {card: Dumpling}
+deal {card: Maki2}
+deal {card: Pudding}
+deal {card: Maki2}
+deal {card: Maki2}
+deal {card: Maki1}
+deal {card: Tempura}
+deal {card: Chopsticks}
+deal {card: Dumpling}
+deal {card: Pudding}
+deal {card: Tempura}
+deal {card: Maki3}
+deal {card: Pudding}
+deal {card: Tempura}
+deal {card: Dumpling}
+deal {card: Chopsticks}
+deal {card: Sashimi}
+deal {card: Maki3}
+# Simultaneous selection 1.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 2.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 3.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 4.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 5.
+chopsticks {player: 0, first: 0, second: 1, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 6.
+chopsticks {player: 0, first: 0, second: 1, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Round 3; contiguous deals to each player.
+deal {card: Maki2}
+deal {card: Tempura}
+deal {card: Tempura}
+deal {card: Wasabi}
+deal {card: SquidNigiri}
+deal {card: SquidNigiri}
+deal {card: Tempura}
+deal {card: Maki3}
+deal {card: Sashimi}
+deal {card: SalmonNigiri}
+deal {card: Sashimi}
+deal {card: SalmonNigiri}
+deal {card: Dumpling}
+deal {card: EggNigiri}
+deal {card: Maki2}
+deal {card: SquidNigiri}
+deal {card: Sashimi}
+deal {card: SalmonNigiri}
+deal {card: Sashimi}
+deal {card: Tempura}
+deal {card: Dumpling}
+deal {card: Maki3}
+deal {card: Sashimi}
+deal {card: Sashimi}
+deal {card: Pudding}
+deal {card: Pudding}
+deal {card: Pudding}
+deal {card: Tempura}
+deal {card: Maki2}
+deal {card: SalmonNigiri}
+deal {card: Maki3}
+deal {card: Dumpling}
+deal {card: Dumpling}
+deal {card: Wasabi}
+deal {card: Dumpling}
+# Simultaneous selection 1.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 2.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 3.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 4.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 5.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
+# Simultaneous selection 6.
+pick {player: 0, index: 0, gift: -1}
+pick {player: 1, index: 0, gift: -1}
+pick {player: 2, index: 0, gift: -1}
+pick {player: 3, index: 0, gift: -1}
+pick {player: 4, index: 0, gift: -1}
