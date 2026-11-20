@@ -1,6 +1,0 @@
-/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/CMakeFiles/game_build.dir
-/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/CMakeFiles/fuzzer_build.dir
-/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/CMakeFiles/verify_all.dir
-/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/CMakeFiles/test.dir
-/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/CMakeFiles/edit_cache.dir
-/Users/dingbingxun/Desktop/rulebook_project/Non-Specific Repository/Non-Specific Repository_test1/build_cmake/CMakeFiles/rebuild_cache.dir
