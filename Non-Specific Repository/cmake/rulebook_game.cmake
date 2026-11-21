@@ -8,6 +8,15 @@ if(NOT DEFINED MODE)
     message(FATAL_ERROR "Missing MODE argument")
 endif()
 
+# The build-local compiler launcher is not an RLC installation prefix.
+# Pass the installed standard library explicitly to the Python CLI tools.
+if((MODE STREQUAL "unit" OR MODE STREQUAL "trace") AND
+   NOT EXISTS "${RLC_STDLIB}/learn.rl")
+    message(FATAL_ERROR
+        "RLC standard library not found: ${RLC_STDLIB}/learn.rl. "
+        "Reconfigure with the active Conda environment.")
+endif()
+
 if(MODE STREQUAL "ir")
     # Write RLC's --ir output to the specified file without shell > redirection.
     # MODE=ir generates LLVM IR.
@@ -46,7 +55,8 @@ elseif(MODE STREQUAL "unit")
     # TEST_STDERR captures standard error.
     # TEST_RESULT stores the exit status.
     execute_process(
-        COMMAND "${RLC_TEST}" "${SOURCE}"
+        COMMAND "${RLC_TEST}" "${SOURCE}" --rlc "${RLC}"
+            --stdlib "${RLC_STDLIB}"
         WORKING_DIRECTORY "${SOURCE_DIR}"
         OUTPUT_VARIABLE TEST_STDOUT
         ERROR_VARIABLE TEST_STDERR
@@ -66,13 +76,12 @@ elseif(MODE STREQUAL "trace")
     cmake_policy(SET CMP0054 NEW)
     file(GLOB trace_files LIST_DIRECTORIES false RELATIVE "${TRACE_DIR}"
         "${TRACE_DIR}/*.trace.txt")
-    # CMake globs case-insensitively on macOS.
+    # Match the required lowercase trace suffix explicitly.
     list(FILTER trace_files INCLUDE REGEX "\\.trace\\.txt$")
     if(NOT trace_files)
         message(FATAL_ERROR "No *.trace.txt files found in ${TRACE_DIR}")
     endif()
 
-    find_program(RLC_ACTION NAMES rlc-action PATHS "${CONDA_BIN}" NO_DEFAULT_PATH)
     file(MAKE_DIRECTORY "${LOG_DIR}")
     foreach(trace_file IN LISTS trace_files)
         string(REGEX REPLACE "\\.trace\\.txt$" "" trace_name "${trace_file}")
@@ -89,10 +98,11 @@ elseif(MODE STREQUAL "trace")
         if(NOT "${read_result}" STREQUAL "0")
             set(failure "Could not read expected state file (${read_result}): ${expected_file}\n${read_error}")
         elseif(NOT RLC_ACTION)
-            set(failure "rlc-action was not found in ${CONDA_BIN}")
+            set(failure "rlc-action was not found. Reconfigure with the active Conda environment.")
         else()
             execute_process(
-                COMMAND "${RLC_ACTION}" "${SOURCE}" "${TRACE_DIR}/${trace_file}" --rlc "${RLC}"
+                COMMAND "${RLC_ACTION}" "${SOURCE}" "${TRACE_DIR}/${trace_file}"
+                    --rlc "${RLC}" --stdlib "${RLC_STDLIB}"
                 WORKING_DIRECTORY "${SOURCE_DIR}"
                 OUTPUT_VARIABLE trace_stdout ERROR_VARIABLE trace_stderr
                 RESULT_VARIABLE trace_result TIMEOUT 60

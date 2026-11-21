@@ -3,12 +3,20 @@ cmake_minimum_required(VERSION 3.20)
 # Compile with Rulebook (RLC) without enabling CMake's default C/C++ build rules.
 project(RulebookGame LANGUAGES NONE)
 
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR
+   NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$")
+    message(FATAL_ERROR
+        "This project requires native Linux x86_64. "
+        "Detected ${CMAKE_SYSTEM_NAME}/${CMAKE_SYSTEM_PROCESSOR}. "
+        "Configure and build it on the Linux server with environment.yml.")
+endif()
+
 # Enable CTest.
 enable_testing()
 
 # ==========================================================
 # 1. Find build and test tools in the active Conda environment
-# Ensure CMake uses RLC and LLVM 22 from the rulebook environment.
+# Use RLC and LLVM 22 from the active Linux Conda environment.
 # ==========================================================
 # Conda sets CONDA_PREFIX to the path of the active environment.
 if(NOT DEFINED ENV{CONDA_PREFIX})
@@ -26,16 +34,30 @@ find_program(RLC NAMES rlc
 find_program(RLC_TEST NAMES rlc-test
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
-# clang-22 is the LLVM 22 tool for compiling and linking.
-find_program(CLANG NAMES clang-22
+# Locate the Rulebook trace replay tool in the active Conda environment.
+find_program(RLC_ACTION NAMES rlc-action
+    PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
+
+# Python tools otherwise infer this from --rlc, which points to our build-local
+# launcher rather than the installed compiler. Trace replay needs learn.rl.
+get_filename_component(RLC_REAL "${RLC}" REALPATH)
+get_filename_component(RLC_BIN_DIR "${RLC_REAL}" DIRECTORY)
+get_filename_component(RLC_PREFIX "${RLC_BIN_DIR}" DIRECTORY)
+find_path(RLC_STDLIB NAMES learn.rl
+    PATHS "${RLC_PREFIX}/lib/rlc/stdlib" "${CONDA_LIB}/rlc/stdlib"
+    NO_DEFAULT_PATH REQUIRED)
+
+
+# Prefer the Conda target driver, which selects the Linux sysroot and linker.
+find_program(CLANG NAMES x86_64-conda-linux-gnu-clang clang-22 clang
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
 # opt processes LLVM IR.
-find_program(LLVM_OPT NAMES opt
+find_program(LLVM_OPT NAMES opt-22 opt
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
 # llvm-symbolizer turns ASan error addresses into readable information.
-find_program(SYMBOLIZER NAMES llvm-symbolizer
+find_program(SYMBOLIZER NAMES llvm-symbolizer-22 llvm-symbolizer
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
 # libfuzzer.a provides the fuzzing engine.
@@ -43,24 +65,42 @@ find_program(SYMBOLIZER NAMES llvm-symbolizer
 find_file(FUZZ_ADAPTER NAMES libfuzzer.a
     PATHS "${CONDA_LIB}" NO_DEFAULT_PATH REQUIRED)
 
-# LLVM 22 needs the SDK path to link on macOS.
-# Stop configuration immediately if the command fails or returns no path.
-# During configuration, run xcrun --sdk macosx --show-sdk-path.
-# OUTPUT_VARIABLE captures the command's standard output.
-# OUTPUT_STRIP_TRAILING_WHITESPACE removes trailing newlines and whitespace.
-# RESULT_VARIABLE stores the command's exit status.
-execute_process(
-    COMMAND xcrun --sdk macosx --show-sdk-path
-    OUTPUT_VARIABLE MACOS_SDK
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    RESULT_VARIABLE SDK_RESULT
-)
-if(NOT "${SDK_RESULT}" STREQUAL "0" OR MACOS_SDK STREQUAL "")
-    message(FATAL_ERROR "macOS SDK not found. Check xcrun and the Xcode Command Line Tools.")
+# Check the external LLVM tools, not RLC's separately bundled LLVM backend.
+function(check_llvm_version tool)
+    execute_process(COMMAND "${${tool}}" --version
+        OUTPUT_VARIABLE version_output ERROR_VARIABLE version_error
+        RESULT_VARIABLE version_result)
+    if(NOT "${version_result}" STREQUAL "0")
+        message(FATAL_ERROR "Cannot run ${tool}: ${${tool}}\n${version_error}")
+    endif()
+    string(REGEX MATCH "[Vv]ersion[ \t]+([0-9]+\\.[0-9]+\\.[0-9]+)"
+        version_match "${version_output}")
+    if(NOT CMAKE_MATCH_1 STREQUAL "22.1.8")
+        message(FATAL_ERROR
+            "${tool} must be LLVM 22.1.8, as pinned in environment.yml.\n${version_output}")
+    endif()
+    message(STATUS "${tool}: ${${tool}} (LLVM ${CMAKE_MATCH_1})")
+endfunction()
+check_llvm_version(CLANG)
+check_llvm_version(LLVM_OPT)
+check_llvm_version(SYMBOLIZER)
+
+execute_process(COMMAND "${CLANG}" -dumpmachine
+    OUTPUT_VARIABLE CLANG_TARGET OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_VARIABLE target_error RESULT_VARIABLE target_result)
+if(NOT "${target_result}" STREQUAL "0" OR
+   NOT CLANG_TARGET MATCHES "^x86_64-.*linux")
+    message(FATAL_ERROR "Expected a Linux x86_64 Clang target; got '${CLANG_TARGET}'.\n${target_error}")
 endif()
+message(STATUS "Clang target: ${CLANG_TARGET}")
+message(STATUS "RLC: ${RLC}")
+message(STATUS "RLC test runner: ${RLC_TEST}")
+message(STATUS "RLC trace runner: ${RLC_ACTION}")
+message(STATUS "RLC standard library: ${RLC_STDLIB}")
+message(STATUS "RLC fuzzer adapter: ${FUZZ_ADAPTER}")
 
 # ==========================================================
-# 2. Directories for final executables (result/) and intermediate files (build_cmake/temp/)
+# 2. Keep all generated files inside the selected build directory.
 # ==========================================================
 # Use CMake's built-in path variables.
 # CMAKE_CURRENT_SOURCE_DIR is the current CMake source directory.
@@ -68,7 +108,7 @@ endif()
 set(SRC "${CMAKE_CURRENT_SOURCE_DIR}")
 set(BUILD "${CMAKE_CURRENT_BINARY_DIR}")
 
-set(RESULT_DIR "${SRC}/result")
+set(RESULT_DIR "${BUILD}/result")
 set(TEMP_DIR "${BUILD}/temp")
 set(FUZZ_TEMP "${TEMP_DIR}/fuzzer")
 set(TEST_TEMP "${TEMP_DIR}/test")
@@ -92,16 +132,25 @@ set(TEST_SOURCE "${SRC}/game_test.rl")
 set(FUZZ_SOURCE "${SRC}/game_fuzz.rl")
 set(HELPER "${SRC}/cmake/rulebook_game.cmake")
 
-# Store the final executables in result/, alongside the .rl files.
+# Store executables in this build directory, avoiding copied platform binaries.
 set(GAME_BIN "${RESULT_DIR}/game")
 set(FUZZ_BIN "${RESULT_DIR}/game_fuzzer")
 
+# Python CLI tools also compile/link through RLC. A launcher selects the same
+# Clang for them without the CLI's space-splitting --extra-rlc-args option.
+string(REPLACE "'" "'\\''" RLC_SHELL "${RLC}")
+string(REPLACE "'" "'\\''" CLANG_SHELL "${CLANG}")
+set(RLC_DRIVER "${BUILD}/rlc-with-clang")
+file(WRITE "${RLC_DRIVER}"
+    "#!/bin/sh\nexec '${RLC_SHELL}' '--clang=${CLANG_SHELL}' \"$@\"\n")
+file(CHMOD "${RLC_DRIVER}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
 # ==========================================================
-# 3. Build the regular game executable (game_main.rl -> result/game)
+# 3. Build the regular game executable (game_main.rl -> build_cmake/result/game)
 # ==========================================================
-# Equivalent to running rlc game_main.rl -g -o result/game manually.
+# Select the same Conda Clang for the executable and Python CLI builds.
 # Define how to build a specific output file.
-# OUTPUT specifies the file to generate, result/game.
+# OUTPUT specifies the executable under this build directory.
 # COMMAND is the command to run.
 # DEPENDS lists build inputs so Ninja knows to rebuild the executable when the source files change.
 # If the files are unchanged and the output still exists, a rebuild is usually unnecessary.
@@ -111,8 +160,8 @@ set(FUZZ_BIN "${RESULT_DIR}/game_fuzzer")
 # VERBATIM handles command argument escaping and quoting. CMake recommends keeping it for custom builds.
 add_custom_command(
     OUTPUT "${GAME_BIN}"
-    COMMAND "${RLC}" "${GAME_MAIN_SOURCE}" -g -o "${GAME_BIN}"
-    DEPENDS "${GAME_MAIN_SOURCE}" "${GAME_SOURCE}"
+    COMMAND "${RLC}" "${GAME_MAIN_SOURCE}" "--clang=${CLANG}" -g -o "${GAME_BIN}"
+    DEPENDS "${GAME_MAIN_SOURCE}" "${GAME_SOURCE}" "${RLC}" "${CLANG}"
     WORKING_DIRECTORY "${SRC}"
     COMMENT "Build the game executable"
     VERBATIM
@@ -158,7 +207,7 @@ add_custom_command(
 
     # Step 4. Link the LLVM libFuzzer runtime and the RLC adapter library.
     COMMAND "${CLANG}"
-        -g -isysroot "${MACOS_SDK}"
+        -g
         -fsanitize=fuzzer,address
         "${ASAN_OBJ}" "${FUZZ_ADAPTER}"
         -o "${FUZZ_BIN}"
@@ -166,6 +215,7 @@ add_custom_command(
     # DEPENDS rebuilds the Fuzzer when the game source, Fuzzer entry point, or helper script changes.
     # BYPRODUCTS lists the three intermediate files this command produces alongside the main output game_fuzzer.
     DEPENDS "${GAME_SOURCE}" "${FUZZ_SOURCE}" "${HELPER}"
+        "${RLC}" "${LLVM_OPT}" "${CLANG}" "${FUZZ_ADAPTER}"
     BYPRODUCTS "${RAW_IR}" "${ASAN_IR}" "${ASAN_OBJ}"
     WORKING_DIRECTORY "${SRC}"
     COMMENT "Build the RLC Fuzzer with ASan instrumentation"
@@ -184,6 +234,8 @@ add_test(NAME unit_test
     COMMAND "${CMAKE_COMMAND}"
         "-DMODE=unit"
         "-DRLC_TEST=${RLC_TEST}"
+        "-DRLC=${RLC_DRIVER}"
+        "-DRLC_STDLIB=${RLC_STDLIB}"
         "-DSOURCE=${TEST_SOURCE}"
         "-DSOURCE_DIR=${SRC}"
         "-DOUTPUT=${TEST_TEMP}/unit_test.log"
@@ -217,8 +269,9 @@ set_tests_properties(sanitizer_test fuzzer_test PROPERTIES
 add_test(NAME trace_test
     COMMAND "${CMAKE_COMMAND}"
         "-DMODE=trace"
-        "-DCONDA_BIN=${CONDA_BIN}"
-        "-DRLC=${RLC}"
+        "-DRLC_ACTION=${RLC_ACTION}"
+        "-DRLC=${RLC_DRIVER}"
+        "-DRLC_STDLIB=${RLC_STDLIB}"
         "-DSOURCE=${GAME_SOURCE}"
         "-DSOURCE_DIR=${SRC}"
         "-DTRACE_DIR=${SRC}/traces"
