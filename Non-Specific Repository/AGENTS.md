@@ -8,7 +8,7 @@ The game rules are provided as PDF files under `input/`, for example `input/rule
 
 The Kuhn Poker example lives in `examples/kuhn_poker/`. Use it as a reference for new games. Generate the four `.rl` files listed below at the generated project root, using the specified filenames and entry points, and the trace and expected-state files under the generated project's root `traces/` directory. Also generate `README.md` at the generated project root. For game-generation tasks, edit only these generated files.
 
-Copy the following files without modification from the supplied Linux `Non-Specific Repository/` template directory. While the Linux migration is local, use this supplied template. Fetch these files from the source repository's `main` branch only after that branch contains the Linux migration; do not substitute an older macOS version:
+Copy the following files without modification from the Linux `Non-Specific Repository/` template directory fetched from the source repository's `main` branch on GitHub; do not substitute an older macOS version:
 
 - `Non-Specific Repository/CMakeLists.txt` to `<project-root>/CMakeLists.txt`.
 - `Non-Specific Repository/cmake/rulebook_game.cmake` to `<project-root>/cmake/rulebook_game.cmake`.
