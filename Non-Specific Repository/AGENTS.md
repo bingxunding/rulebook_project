@@ -70,6 +70,8 @@ rlc-action game.rl traces/game1.trace.txt \
 
 If the build directory or `RLC_STDLIB` was overridden during configuration, use that build directory's `rlc-with-clang` wrapper and the same standard-library path here.
 
+- Run the Rulebook compiler only through the CMake build and CTest commands in this file, or through `rlc-action` and `rlc-random` with `--rlc` set to the build directory's `rlc-with-clang` wrapper and `--stdlib` set to the standard-library path, as in the example above. Do not run `rlc` directly.
+
 ## Build and Verification
 
 Once all four generated `.rl` files and the trace pairs are in place, run these commands from the repository root on Linux x86_64 with glibc 2.28 or newer. The toolchain uses LLVM 22 and a Linux sysroot from the active Conda environment; no macOS SDK is used. Create the environment on Linux from `environment.yml`, or activate an existing environment with the required tools and versions. The default environment name is `rulebook_linux`; any environment name is acceptable.

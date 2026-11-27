@@ -26,7 +26,28 @@ endif()
 set(CONDA_BIN "$ENV{CONDA_PREFIX}/bin")
 set(CONDA_LIB "$ENV{CONDA_PREFIX}/lib")
 
-# Ensure rlc is installed.
+# Ensure rlc is installed. The optional RULEBOOK_RLC environment variable selects
+# the real compiler for a new build directory. A cached RLC is never replaced,
+# because RLC_STDLIB below is derived from it and cached as well.
+if(NOT "$ENV{RULEBOOK_RLC}" STREQUAL "")
+    if(NOT IS_ABSOLUTE "$ENV{RULEBOOK_RLC}")
+        message(FATAL_ERROR "RULEBOOK_RLC must be an absolute path: $ENV{RULEBOOK_RLC}")
+    endif()
+    if(NOT RLC)
+        find_program(RLC NAMES "$ENV{RULEBOOK_RLC}" NO_DEFAULT_PATH)
+        if(NOT RLC)
+            message(FATAL_ERROR "RULEBOOK_RLC is not an executable file: $ENV{RULEBOOK_RLC}")
+        endif()
+    endif()
+    get_filename_component(RULEBOOK_RLC_REAL "$ENV{RULEBOOK_RLC}" REALPATH)
+    get_filename_component(RLC_CACHED_REAL "${RLC}" REALPATH)
+    if(NOT RULEBOOK_RLC_REAL STREQUAL RLC_CACHED_REAL)
+        message(FATAL_ERROR
+            "RULEBOOK_RLC (${RULEBOOK_RLC_REAL}) is not the compiler cached in this build "
+            "directory (${RLC_CACHED_REAL}). The compiler has changed: configure a new build "
+            "directory, so that RLC_STDLIB and the other cached settings match the compiler.")
+    endif()
+endif()
 find_program(RLC NAMES rlc
     PATHS "${CONDA_BIN}" NO_DEFAULT_PATH REQUIRED)
 
@@ -136,9 +157,119 @@ set(HELPER "${SRC}/cmake/rulebook_game.cmake")
 set(GAME_BIN "${RESULT_DIR}/game")
 set(FUZZ_BIN "${RESULT_DIR}/game_fuzzer")
 
+# ==========================================================
+# Optional RLC invocation monitor
+# ==========================================================
+# An experiment launcher can route every RLC invocation through a logging
+# wrapper. RLC_MONITOR_WRAPPER and RLC_MONITOR_LOG_DIR, given as environment or
+# cache variables, enable it. Once enabled, it stays enabled for this build
+# directory; -DRLC_MONITOR_ENABLED=OFF disables it. RLC_ENTRY is the command
+# that invokes RLC: the real compiler, or the rlc-monitored launcher.
+set(RLC_MONITORED "${BUILD}/rlc-monitored")
+set(RLC_ENTRY "${RLC}")
+
+# Return a monitor setting: the cache value first, else the environment value.
+function(rlc_monitor_setting name result)
+    set(value "$CACHE{${name}}")
+    set(from_env "$ENV{${name}}")
+    if(NOT value STREQUAL "" AND NOT from_env STREQUAL "")
+        get_filename_component(value_real "${value}" REALPATH)
+        get_filename_component(from_env_real "${from_env}" REALPATH)
+        if(NOT value_real STREQUAL from_env_real)
+            message(FATAL_ERROR
+                "${name} is '${value}' in the CMake cache but '${from_env}' in the "
+                "environment. Configure a new build directory to change it.")
+        endif()
+    elseif(value STREQUAL "")
+        set(value "${from_env}")
+    endif()
+    if(NOT value STREQUAL "" AND NOT IS_ABSOLUTE "${value}")
+        message(FATAL_ERROR "${name} must be an absolute path: ${value}")
+    endif()
+    set(${result} "${value}" PARENT_SCOPE)
+endfunction()
+
+if(DEFINED CACHE{RLC_MONITOR_ENABLED} AND NOT RLC_MONITOR_ENABLED)
+    set(RLC_MONITOR OFF)
+    message(STATUS "RLC monitor: disabled (RLC_MONITOR_ENABLED=OFF in the cache; "
+        "RLC_MONITOR_* environment variables are ignored)")
+else()
+    rlc_monitor_setting(RLC_MONITOR_WRAPPER RLC_MONITOR_WRAPPER_VALUE)
+    rlc_monitor_setting(RLC_MONITOR_LOG_DIR RLC_MONITOR_LOG_DIR_VALUE)
+    if(RLC_MONITOR_ENABLED)
+        # Enabled by an earlier configuration of this build directory.
+        if(RLC_MONITOR_WRAPPER_VALUE STREQUAL "" OR RLC_MONITOR_LOG_DIR_VALUE STREQUAL "")
+            message(FATAL_ERROR
+                "RLC_MONITOR_ENABLED is ON in this build directory, but RLC_MONITOR_WRAPPER "
+                "and RLC_MONITOR_LOG_DIR are not both set in the cache or the environment.")
+        endif()
+        set(RLC_MONITOR ON)
+    elseif(RLC_MONITOR_WRAPPER_VALUE STREQUAL "" AND RLC_MONITOR_LOG_DIR_VALUE STREQUAL "")
+        set(RLC_MONITOR OFF)
+        message(STATUS "RLC monitor: disabled")
+    elseif(RLC_MONITOR_WRAPPER_VALUE STREQUAL "" OR RLC_MONITOR_LOG_DIR_VALUE STREQUAL "")
+        message(FATAL_ERROR
+            "Set both RLC_MONITOR_WRAPPER and RLC_MONITOR_LOG_DIR to enable the RLC monitor, "
+            "or neither of them.")
+    else()
+        set(RLC_MONITOR ON)
+    endif()
+endif()
+
+if(RLC_MONITOR)
+    if(NOT EXISTS "${RLC_MONITOR_WRAPPER_VALUE}" OR IS_DIRECTORY "${RLC_MONITOR_WRAPPER_VALUE}")
+        message(FATAL_ERROR "RLC monitor wrapper not found: ${RLC_MONITOR_WRAPPER_VALUE}")
+    endif()
+    find_program(RLC_MONITOR_PYTHON NAMES python3 PATHS "${CONDA_BIN}" NO_DEFAULT_PATH)
+    if(NOT RLC_MONITOR_PYTHON)
+        message(FATAL_ERROR "The RLC monitor needs python3 in ${CONDA_BIN}.")
+    endif()
+    execute_process(
+        COMMAND "${RLC_MONITOR_PYTHON}" -c "import sys; sys.exit(sys.version_info < (3, 9))"
+        RESULT_VARIABLE python_result OUTPUT_QUIET ERROR_QUIET)
+    if(NOT python_result EQUAL 0)
+        message(FATAL_ERROR "The RLC monitor needs Python 3.9 or newer: ${RLC_MONITOR_PYTHON}")
+    endif()
+    if(NOT IS_DIRECTORY "${RLC_MONITOR_LOG_DIR_VALUE}")
+        message(FATAL_ERROR "RLC monitor log directory not found: ${RLC_MONITOR_LOG_DIR_VALUE}")
+    endif()
+    string(RANDOM LENGTH 16 probe_suffix)
+    set(probe "${RLC_MONITOR_LOG_DIR_VALUE}/.rlc_monitor_configure_probe_${probe_suffix}")
+    execute_process(COMMAND "${CMAKE_COMMAND}" -E touch "${probe}"
+        RESULT_VARIABLE probe_result OUTPUT_QUIET ERROR_QUIET)
+    file(REMOVE "${probe}")
+    if(NOT probe_result EQUAL 0)
+        message(FATAL_ERROR "RLC monitor log directory is not writable: ${RLC_MONITOR_LOG_DIR_VALUE}")
+    endif()
+
+    set(RLC_MONITOR_ENABLED ON CACHE BOOL "Route RLC invocations through the monitor." FORCE)
+    set(RLC_MONITOR_WRAPPER "${RLC_MONITOR_WRAPPER_VALUE}" CACHE FILEPATH
+        "RLC monitor wrapper script." FORCE)
+    set(RLC_MONITOR_LOG_DIR "${RLC_MONITOR_LOG_DIR_VALUE}" CACHE PATH
+        "RLC monitor log directory." FORCE)
+
+    # -I keeps the caller's PYTHON* variables from affecting the wrapper; the
+    # compiler still receives the unchanged environment.
+    string(REPLACE "'" "'\\''" python_shell "${RLC_MONITOR_PYTHON}")
+    string(REPLACE "'" "'\\''" wrapper_shell "${RLC_MONITOR_WRAPPER_VALUE}")
+    string(REPLACE "'" "'\\''" real_rlc_shell "${RLC}")
+    string(REPLACE "'" "'\\''" log_dir_shell "${RLC_MONITOR_LOG_DIR_VALUE}")
+    string(REPLACE "'" "'\\''" source_shell "${CMAKE_CURRENT_SOURCE_DIR}")
+    file(WRITE "${RLC_MONITORED}"
+        "#!/bin/sh\nexec '${python_shell}' -I '${wrapper_shell}' --real-rlc '${real_rlc_shell}' "
+        "--log-dir '${log_dir_shell}' --project-root '${source_shell}' -- \"$@\"\n")
+    file(CHMOD "${RLC_MONITORED}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    set(RLC_ENTRY "${RLC_MONITORED}")
+    message(STATUS "RLC monitor: enabled (wrapper=${RLC_MONITOR_WRAPPER_VALUE}, "
+        "log dir=${RLC_MONITOR_LOG_DIR_VALUE})")
+else()
+    file(REMOVE "${RLC_MONITORED}")
+endif()
+
 # Python CLI tools also compile/link through RLC. A launcher selects the same
 # Clang for them without the CLI's space-splitting --extra-rlc-args option.
-string(REPLACE "'" "'\\''" RLC_SHELL "${RLC}")
+# It runs RLC_ENTRY, so these calls are monitored too when the monitor is on.
+string(REPLACE "'" "'\\''" RLC_SHELL "${RLC_ENTRY}")
 string(REPLACE "'" "'\\''" CLANG_SHELL "${CLANG}")
 set(RLC_DRIVER "${BUILD}/rlc-with-clang")
 file(WRITE "${RLC_DRIVER}"
@@ -160,7 +291,7 @@ file(CHMOD "${RLC_DRIVER}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROU
 # VERBATIM handles command argument escaping and quoting. CMake recommends keeping it for custom builds.
 add_custom_command(
     OUTPUT "${GAME_BIN}"
-    COMMAND "${RLC}" "${GAME_MAIN_SOURCE}" "--clang=${CLANG}" -g -o "${GAME_BIN}"
+    COMMAND "${RLC_ENTRY}" "${GAME_MAIN_SOURCE}" "--clang=${CLANG}" -g -o "${GAME_BIN}"
     DEPENDS "${GAME_MAIN_SOURCE}" "${GAME_SOURCE}" "${RLC}" "${CLANG}"
     WORKING_DIRECTORY "${SRC}"
     COMMENT "Build the game executable"
@@ -188,7 +319,7 @@ add_custom_command(
     # The helper captures RLC standard output with OUTPUT_FILE, without shell > redirection.
     COMMAND "${CMAKE_COMMAND}"
         "-DMODE=ir"
-        "-DRLC=${RLC}"
+        "-DRLC=${RLC_ENTRY}"
         "-DSOURCE=${FUZZ_SOURCE}"
         "-DINCLUDE_DIR=${SRC}"
         "-DOUTPUT=${RAW_IR}"
